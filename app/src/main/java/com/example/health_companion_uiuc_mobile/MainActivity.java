@@ -1,5 +1,6 @@
 package com.example.health_companion_uiuc_mobile;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Contact Us for More Information", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://cascade.cs.illinois.edu/"));
+                startActivity(browserIntent);
             }
         });
 

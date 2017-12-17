@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Health Companion</string>
+    <string name="app_version">Version 1.0</string>
+
+
     <string name="stats">Your Health Data</string>
     <string name="plan">Exercise Plan</string>
     <string name="about">About</string>
