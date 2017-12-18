@@ -24,21 +24,13 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.SubcolumnValue;
@@ -243,15 +235,15 @@ public class StatsFragment extends Fragment {
         protected String doInBackground(Void... voids) {
             String result = null;
 
-//            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
-//                Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
-//            } else {
-//                try {
-//                    result = HttpHelper.downloadUrl("http://health-companion-uiuc.azurewebsites.net/getactivity?userid=52KG66&daysBefore=0&today=2017-10-02");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
+                Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    result = HttpHelper.downloadUrl("http://health-companion-uiuc.azurewebsites.net/getactivity?userid=52KG66&daysBefore=0&today=2017-10-02");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             return result;
         }
@@ -267,18 +259,19 @@ public class StatsFragment extends Fragment {
             // Remove progress bar
             mReloadingListProgressBar.setVisibility(View.GONE);
 
+            if (result == null) {
+                return;
+            }
+
             LabelEntryViewHolder holder;
             holder = new LabelEntryViewHolder();
             holder.labelsTextView = (TextView) mView.findViewById(R.id.activity_header);
             holder.labelsTextView.setText("Intraday Activities by Day Time");
 
             // Generate data for previewed chart and copy of that data for preview chart.
-            generateDefaultData();
+            generateChartData(result);
 
             chart.setColumnChartData(data);
-
-            // Disable zoom/scroll for previewed chart, visible chart ranges depends on preview chart viewport so
-            // zoom/scroll is unnecessary.
             chart.setZoomEnabled(false);
             chart.setScrollEnabled(false);
 
@@ -317,9 +310,9 @@ public class StatsFragment extends Fragment {
         previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 
-    private void generateDefaultData() {
+    private void generateChartData(String result) {
         int numSubcolumns = 1;
-        int numColumns = 1440;
+        int numColumns = 1440; // number of minutes
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
         for (int i = 0; i < numColumns; ++i) {
@@ -335,7 +328,7 @@ public class StatsFragment extends Fragment {
         }
 
         data = new ColumnChartData(columns);
-        data.setAxisXBottom(new Axis());
+        data.setAxisXBottom(getAxisXWithLabels());
         data.setAxisYLeft(new Axis().setHasLines(true));
 
         // prepare preview data, is better to use separate deep copy for preview chart.
@@ -346,6 +339,24 @@ public class StatsFragment extends Fragment {
                 value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
             }
         }
+    }
 
+    private Axis getAxisXWithLabels() {
+        List<AxisValue> values = new ArrayList<AxisValue>();
+
+        for (int i = 60; i < 1440; i += 60) {
+            AxisValue axisValue = new AxisValue((float) i);
+            int hour = i / 60;
+            if (hour > 12) {
+                axisValue = axisValue.setLabel((hour - 12) + " PM");
+            } else if (hour == 12) {
+                axisValue = axisValue.setLabel("12 PM");
+            } else {
+                axisValue = axisValue.setLabel(hour + " AM");
+            }
+            values.add(axisValue);
+        }
+
+        return new Axis(values);
     }
 }
