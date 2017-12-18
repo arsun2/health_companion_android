@@ -12,13 +12,13 @@
         tools:context="com.example.health_companion_uiuc_mobile.StatsFragment">
 
         <TextView
+            android:id="@+id/activity_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
             android:layout_marginTop="10dp"
-            android:textColor="@color/colorTitle"
-            android:text="My Sports Calendar" />
+            android:textColor="@color/colorTitle" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -52,13 +52,39 @@
             </LinearLayout>
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/label_section"
+        <lecho.lib.hellocharts.view.ColumnChartView
+            android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="22dp"
+            android:layout_weight="1"
+            android:paddingTop="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray" />
+
+        <lecho.lib.hellocharts.view.PreviewColumnChartView
+            android:id="@+id/chart_preview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="22dp"
+            android:layout_weight="1"
+            android:paddingTop="12dp" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/label_section"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/default_padding_left"-->
+            <!--android:layout_marginRight="@dimen/default_padding_right"-->
+            <!--android:layout_marginTop="20dp" />-->
 
         <TextView
             android:id="@+id/label_header"
@@ -66,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:textColor="@color/colorTitle" />
 
@@ -76,6 +102,7 @@
             android:layout_height="200dp"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
+            android:layout_marginBottom="20dp"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:scrollbars="vertical" />
