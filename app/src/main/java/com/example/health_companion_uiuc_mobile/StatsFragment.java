@@ -313,17 +313,38 @@ public class StatsFragment extends Fragment {
     private void generateChartData(String result) {
         int numSubcolumns = 1;
         int numColumns = 1440; // number of minutes
+
+        // accumulate calories data for each minutes from JSON result
+        float[] caloriesArray = new float[numColumns];
+
+        try {
+            JSONArray streamer = new JSONArray(result);
+            for (int i = 0; i < streamer.length(); i++) {
+                JSONArray entry = new JSONArray(streamer.getString(i));
+
+                String wholeTime = entry.getString(0);
+                String time = wholeTime.split("T")[1];
+                String hour = time.split(":")[0];
+                String minute = time.split(":")[1];
+                int minutes = Integer.valueOf(hour) * 60 + Integer.valueOf(minute);
+
+                float calories = (float) entry.getDouble(1);
+
+                caloriesArray[minutes] += calories;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // store as chart data
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
-        for (int i = 0; i < numColumns; ++i) {
 
+        for (int i = 0; i < numColumns; i++) {
             values = new ArrayList<SubcolumnValue>();
-            for (int j = 0; j < numSubcolumns; ++j) {
-                float ran = (float) (Math.random() * 50f);
-                ran = ran > 25? 0 : ran;
-                values.add(new SubcolumnValue(ran, ChartUtils.pickColor()));
+            for (int j = 0; j < numSubcolumns; j++) {
+                values.add(new SubcolumnValue(caloriesArray[i], ChartUtils.pickColor()));
             }
-
             columns.add(new Column(values));
         }
 

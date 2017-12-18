@@ -18,7 +18,13 @@
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
             android:layout_marginTop="10dp"
-            android:textColor="@color/colorTitle" />
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
+            android:focusedByDefault="true"
+            android:textColor="@color/colorTitle">
+
+            <requestFocus />
+        </TextView>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -55,11 +61,11 @@
         <lecho.lib.hellocharts.view.ColumnChartView
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="22dp"
+            android:layout_height="150dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="16dp"
             android:layout_weight="1"
-            android:paddingTop="10dp" />
+            android:paddingTop="17dp" />
 
         <View
             android:layout_width="match_parent"
@@ -72,11 +78,11 @@
         <lecho.lib.hellocharts.view.PreviewColumnChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="22dp"
+            android:layout_height="150dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="16dp"
             android:layout_weight="1"
-            android:paddingTop="12dp" />
+            android:paddingTop="17dp" />
 
         <!--<TextView-->
             <!--android:id="@+id/label_section"-->
