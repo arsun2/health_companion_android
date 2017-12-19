@@ -5,11 +5,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,7 +47,7 @@ import lecho.lib.hellocharts.view.PreviewColumnChartView;
  * {@link StatsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class StatsFragment extends Fragment {
+public class StatsFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
     private GetActivityAsyncTask mGetActivityAsyncTask;
@@ -60,9 +62,6 @@ public class StatsFragment extends Fragment {
 
     private ColumnChartView chart;
     private PreviewColumnChartView previewChart;
-    private ColumnChartData data;
-    private ColumnChartData previewData;
-
 
     private static class LabelEntryViewHolder {
         public TextView labelsTextView;
@@ -72,11 +71,27 @@ public class StatsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private static StatsFragment fragment = null;
+
+    public static StatsFragment getInstance(){
+        return fragment;
+    }
+
+    @Override
+    /**
+     * click "select date" button
+     */
+    public void onClick(View view) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(),"Date Picker");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_stats, container, false);
+        fragment = this;
         return mView;
     }
 
@@ -94,16 +109,23 @@ public class StatsFragment extends Fragment {
         mLabelsListView = (ListView) mView.findViewById(R.id.label_list);
         ViewCompat.setNestedScrollingEnabled(mLabelsListView, true);
 
+        Button b = (Button) mView.findViewById(R.id.select_date);
+        b.setOnClickListener(this);
+
         if (labelsListAdapter == null) {
             labelsListAdapter = new LabelsListAdapter(getActivity());
         }
         mLabelsListView.setAdapter(labelsListAdapter);
 
-        mGetActivityAsyncTask = new GetActivityAsyncTask();
-        mGetActivityAsyncTask.execute();
+        getActivityData(2017, 10, 2);
 
         mGetLabelAsyncTask = new GetLabelAsyncTask();
         mGetLabelAsyncTask.execute();
+    }
+
+    public void getActivityData(int year, int month, int day) {
+        mGetActivityAsyncTask = new GetActivityAsyncTask(year, month, day);
+        mGetActivityAsyncTask.execute();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -223,7 +245,16 @@ public class StatsFragment extends Fragment {
     /**
      * Create a new AsynTask to fetch activity data from Azure
      */
-    private class GetActivityAsyncTask extends AsyncTask<Void, Void, String> {
+    class GetActivityAsyncTask extends AsyncTask<Void, Void, String> {
+        private String year;
+        private String month;
+        private String day;
+
+        public GetActivityAsyncTask(int year, int month, int day) {
+            this.year = Integer.toString(year);
+            this.month = month < 10? "0" + month : "" + month;
+            this.day = day < 10? "0" + day : "" + day;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -233,13 +264,15 @@ public class StatsFragment extends Fragment {
 
         @Override
         protected String doInBackground(Void... voids) {
+            String url = "http://health-companion-uiuc.azurewebsites.net/getactivity?userid=52KG66&daysBefore=0&today=" + year + "-" + month + "-" + day;
+            System.out.println(url);
             String result = null;
 
             if (!NetworkHelper.checkNetworkAccess(getActivity())) {
                 Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
             } else {
                 try {
-                    result = HttpHelper.downloadUrl("http://health-companion-uiuc.azurewebsites.net/getactivity?userid=52KG66&daysBefore=0&today=2017-10-02");
+                    result = HttpHelper.downloadUrl(url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -263,25 +296,26 @@ public class StatsFragment extends Fragment {
                 return;
             }
 
-            LabelEntryViewHolder holder;
-            holder = new LabelEntryViewHolder();
+            StatsFragment.LabelEntryViewHolder holder;
+            holder = new StatsFragment.LabelEntryViewHolder();
             holder.labelsTextView = (TextView) mView.findViewById(R.id.activity_header);
-            holder.labelsTextView.setText("Intraday Activities by Day Time");
+            holder.labelsTextView.setText("Intraday Activities for " + month + "/" + day + "/" + year);
 
             // Generate data for previewed chart and copy of that data for preview chart.
-            generateChartData(result);
+            ColumnChartData[] results = generateChartData(result);
+            ColumnChartData data = results[0];
+            ColumnChartData previewData = results[1];
 
             chart.setColumnChartData(data);
             chart.setZoomEnabled(false);
             chart.setScrollEnabled(false);
 
             previewChart.setColumnChartData(previewData);
-            previewChart.setViewportChangeListener(new ViewportListener());
+            previewChart.setViewportChangeListener(new StatsFragment.ViewportListener());
 
             previewX(false);
         }
     }
-
 
     /**
      * Viewport listener for preview chart(lower one). in {@link #onViewportChanged(Viewport)} method change
@@ -310,7 +344,7 @@ public class StatsFragment extends Fragment {
         previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 
-    private void generateChartData(String result) {
+    private ColumnChartData[] generateChartData(String result) {
         int numSubcolumns = 1;
         int numColumns = 1440; // number of minutes
 
@@ -348,18 +382,24 @@ public class StatsFragment extends Fragment {
             columns.add(new Column(values));
         }
 
-        data = new ColumnChartData(columns);
+        ColumnChartData data = new ColumnChartData(columns);
         data.setAxisXBottom(getAxisXWithLabels());
         data.setAxisYLeft(new Axis().setHasLines(true));
 
         // prepare preview data, is better to use separate deep copy for preview chart.
         // set color to grey to make preview area more visible.
-        previewData = new ColumnChartData(data);
+        ColumnChartData previewData = new ColumnChartData(data);
         for (Column column : previewData.getColumns()) {
             for (SubcolumnValue value : column.getValues()) {
                 value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
             }
         }
+
+        ColumnChartData[] results = new ColumnChartData[2];
+        results[0] = data;
+        results[1] = previewData;
+        return results;
+
     }
 
     private Axis getAxisXWithLabels() {
