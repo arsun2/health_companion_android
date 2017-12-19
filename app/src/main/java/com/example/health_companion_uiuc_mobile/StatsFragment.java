@@ -9,6 +9,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -63,6 +66,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private ColumnChartView chart;
     private PreviewColumnChartView previewChart;
 
+    private int year = 2017;
+    private int month = 10;
+    private int day = 2;
+
     private static class LabelEntryViewHolder {
         public TextView labelsTextView;
     }
@@ -84,6 +91,34 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(),"Date Picker");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh) {
+            StatsFragment.getInstance().refresh();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -117,16 +152,31 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         }
         mLabelsListView.setAdapter(labelsListAdapter);
 
-        getActivityData(2017, 10, 2);
+        refresh();
+    }
 
+    public void updateDate(int year, int month, int day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        getActivityData();
+    }
+
+    public void refresh() {
+        getActivityData();
+        getLabelData();
+    }
+
+    private void getActivityData() {
+        mGetActivityAsyncTask = new GetActivityAsyncTask(year, month, day);
+        mGetActivityAsyncTask.execute();
+    }
+
+    private void getLabelData() {
         mGetLabelAsyncTask = new GetLabelAsyncTask();
         mGetLabelAsyncTask.execute();
     }
 
-    public void getActivityData(int year, int month, int day) {
-        mGetActivityAsyncTask = new GetActivityAsyncTask(year, month, day);
-        mGetActivityAsyncTask.execute();
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -214,6 +264,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             holder.labelsTextView = (TextView) mView.findViewById(R.id.label_header);
             holder.labelsTextView.setText("Labels for Your Daily Life");
 
+            labelsListAdapter.clearMessages();
             try {
                 JSONArray streamer = new JSONArray(result);
                 String label = "";
@@ -227,7 +278,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                     label = activity + ", consuming around " + calories + " calorie, feeling " + feeling;
 
                     labelsListAdapter.addLabel(label);
-//                    mLabelsListView.setSelection(labelsListAdapter.getCount() - 1);
                 }
 
 //                LabelEntryViewHolder holder;
@@ -302,7 +352,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             holder.labelsTextView.setText("Intraday Activities for " + month + "/" + day + "/" + year);
 
             // Generate data for previewed chart and copy of that data for preview chart.
-            ColumnChartData[] results = generateChartData(result);
+            ColumnChartData[] results = generateChartData(result, year, month, day);
             ColumnChartData data = results[0];
             ColumnChartData previewData = results[1];
 
@@ -344,9 +394,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 
-    private ColumnChartData[] generateChartData(String result) {
+    private ColumnChartData[] generateChartData(String result, String year, String month, String day) {
         int numSubcolumns = 1;
         int numColumns = 1440; // number of minutes
+        String date = year + "-" + month + "-" + day;
 
         // accumulate calories data for each minutes from JSON result
         float[] caloriesArray = new float[numColumns];
@@ -357,6 +408,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 JSONArray entry = new JSONArray(streamer.getString(i));
 
                 String wholeTime = entry.getString(0);
+                if (!date.equals(wholeTime.split("T")[0])) {
+                    continue;
+                }
                 String time = wholeTime.split("T")[1];
                 String hour = time.split(":")[0];
                 String minute = time.split(":")[1];

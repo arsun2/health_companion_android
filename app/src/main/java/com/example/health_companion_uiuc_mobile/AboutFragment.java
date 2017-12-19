@@ -3,6 +3,7 @@ package com.example.health_companion_uiuc_mobile;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -25,6 +26,11 @@ public class AboutFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(false);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
