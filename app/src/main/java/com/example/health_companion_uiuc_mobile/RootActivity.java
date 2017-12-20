@@ -15,6 +15,11 @@ import com.fitbit.authentication.AuthenticationResult;
 import com.fitbit.authentication.Scope;
 import com.example.health_companion_uiuc_mobile.databinding.ActivityRootBinding;
 
+/**
+ * Created by jboggess on 9/28/16.
+ * https://github.com/Stasonis/fitbit-api-example-android
+ */
+
 import java.util.Set;
 
 public class RootActivity extends AppCompatActivity implements AuthenticationHandler {

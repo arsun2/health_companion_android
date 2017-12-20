@@ -18,6 +18,7 @@ import static com.fitbit.authentication.Scope.activity;
 
 /**
  * Created by jboggess on 9/28/16.
+ * https://github.com/Stasonis/fitbit-api-example-android
  */
 
 public class FitbitAuthApplication extends Application {
@@ -66,8 +67,7 @@ public class FitbitAuthApplication extends Application {
                     .setEncryptionKey(SECURE_KEY)
                     .setTokenExpiresIn(2592000L) // 30 days
                     .setBeforeLoginActivity(new Intent(context, mainActivityClass))
-                    .addRequiredScopes(Scope.profile, Scope.settings)
-                    .addOptionalScopes(activity, Scope.weight)
+                    .addRequiredScopes(Scope.profile)
                     .setLogoutOnAuthFailure(true)
 
                     .build();
