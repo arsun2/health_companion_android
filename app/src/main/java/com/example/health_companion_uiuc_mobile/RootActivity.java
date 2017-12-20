@@ -17,10 +17,6 @@ import com.example.health_companion_uiuc_mobile.databinding.ActivityRootBinding;
 
 import java.util.Set;
 
-/**
- * Created by Joe on 12/20/17.
- */
-
 public class RootActivity extends AppCompatActivity implements AuthenticationHandler {
 
     private ActivityRootBinding binding;
