@@ -2,6 +2,13 @@
     <string name="app_name">Health Companion</string>
     <string name="app_version">Version 1.0</string>
 
+    <string name="welcome">Welcome to Health Companion!</string>
+    <string name="login_with_fitbit">Login with Fitbit</string>
+    <string name="fitbit_logo_description">Fitbit Logo</string>
+
+    <string name="login_title">Login</string>
+    <string name="missing_scopes_error">Error logging in. Missing the following required scopes: </string>
+    <string name="login_dismissed">Login dismissed or no scopes selected</string>
 
     <string name="stats">Your Health Data</string>
     <string name="plan">Exercise Plan</string>

@@ -1,5 +1,6 @@
 package com.example.health_companion_uiuc_mobile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +29,9 @@ public class MainActivity extends AppCompatActivity
 
     private boolean networkOK;
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
