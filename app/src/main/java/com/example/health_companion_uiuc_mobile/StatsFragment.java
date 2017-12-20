@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
+import com.fitbit.authentication.AuthenticationManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,6 +116,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             StatsFragment.getInstance().refresh();
+            return true;
+        } else if (id == R.id.action_logout) {
+            AuthenticationManager.logout(getActivity());
             return true;
         }
 

@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fitbit.authentication.AuthenticationManager;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +50,9 @@ public class PlanFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
+            return true;
+        } else if (id == R.id.action_logout) {
+            AuthenticationManager.logout(getActivity());
             return true;
         }
 

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
+import com.fitbit.authentication.AuthenticationManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
+    }
+
+    public void onLogoutClick(View view) {
+
     }
 
     @Override
