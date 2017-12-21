@@ -70,6 +70,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private int year = 2017;
     private int month = 10;
     private int day = 2;
+    private String userID = "";
 
     private static class LabelEntryViewHolder {
         public TextView labelsTextView;
@@ -97,6 +98,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            userID = getArguments().getString("userID");
+        }
+//        Toast.makeText(getActivity(), "Here! " + userID, Toast.LENGTH_LONG).show();
         setHasOptionsMenu(true);
     }
 
@@ -235,12 +240,14 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         @Override
         protected String doInBackground(Void... voids) {
             String result = null;
+            String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + userID;
+            System.out.println(url);
 
             if (!NetworkHelper.checkNetworkAccess(getActivity())) {
                 Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
             } else {
                 try {
-                    result = HttpHelper.downloadUrl("http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=52KG66");
+                    result = HttpHelper.downloadUrl(url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -318,7 +325,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected String doInBackground(Void... voids) {
-            String url = "http://health-companion-uiuc.azurewebsites.net/getactivity?userid=52KG66&daysBefore=0&today=" + year + "-" + month + "-" + day;
+            String url = "http://health-companion-uiuc.azurewebsites.net/getactivity?userid=" + userID + "&daysBefore=0&today=" + year + "-" + month + "-" + day;
             System.out.println(url);
             String result = null;
 

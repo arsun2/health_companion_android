@@ -120,7 +120,6 @@ public class RootActivity extends AppCompatActivity implements AuthenticationHan
         }
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.login_title)
                 .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

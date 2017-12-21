@@ -1,13 +1,16 @@
 package com.example.health_companion_uiuc_mobile;
 
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,22 +23,26 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
+import com.fitbit.api.exceptions.MissingScopesException;
+import com.fitbit.api.loaders.ResourceLoaderResult;
+import com.fitbit.api.models.User;
+import com.fitbit.api.models.UserContainer;
+import com.fitbit.api.services.UserService;
 import com.fitbit.authentication.AuthenticationManager;
+import com.google.common.base.Joiner;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                    StatsFragment.OnFragmentInteractionListener,
                    AboutFragment.OnFragmentInteractionListener,
-                   PlanFragment.OnFragmentInteractionListener {
+                   PlanFragment.OnFragmentInteractionListener,
+                   LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>>{
 
     private boolean networkOK;
+    private User user;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
-    }
-
-    public void onLogoutClick(View view) {
-
     }
 
     @Override
@@ -66,10 +73,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        displayView(R.id.nav_stats);
-
         networkOK = NetworkHelper.checkNetworkAccess(this);
         Toast.makeText(this, "Network ok: " + networkOK, Toast.LENGTH_SHORT).show();
+
+        // load user profile and then start the stat fragment
+        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     @Override
@@ -93,6 +101,8 @@ public class MainActivity extends AppCompatActivity
     public void displayView(int viewId) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
+        Bundle bundle = new Bundle();
+        bundle.putString("userID", user.getEncodedId());
 
         switch (viewId) {
             case R.id.nav_stats:
@@ -110,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (fragment != null) {
+            fragment.setArguments(bundle);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, fragment);
             ft.commit();
@@ -128,5 +139,35 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    // load user profile
+
+    @Override
+    public Loader<ResourceLoaderResult<UserContainer>> onCreateLoader(int i, Bundle bundle) {
+        return UserService.getLoggedInUserLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ResourceLoaderResult<UserContainer>> loader, ResourceLoaderResult<UserContainer> data) {
+        switch (data.getResultType()) {
+            case ERROR:
+                Toast.makeText(this, R.string.error_loading_data, Toast.LENGTH_LONG).show();
+                break;
+            case EXCEPTION:
+                Toast.makeText(this, R.string.error_loading_data, Toast.LENGTH_LONG).show();
+                break;
+        }
+
+        if (data.isSuccessful()) {
+            user = data.getResult().getUser();
+
+            // display the stat view only after loading the user
+            displayView(R.id.nav_stats);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ResourceLoaderResult<UserContainer>> loader) {
     }
 }
