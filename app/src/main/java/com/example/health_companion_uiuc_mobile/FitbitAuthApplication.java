@@ -33,7 +33,7 @@ public class FitbitAuthApplication extends Application {
      */
 
     //!! THIS SHOULD BE IN AN ANDROID KEYSTORE!! See https://developer.android.com/training/articles/keystore.html
-    private static final String CLIENT_SECRET = "86401692efd006045a157f45755000d0";
+    private static final String CLIENT_SECRET = "2dddad384d18bed551c7ebfc39837b37";
 
     /**
      * This key was generated using the SecureKeyGenerator [java] class. Run as a Java application (not Android)
@@ -41,7 +41,7 @@ public class FitbitAuthApplication extends Application {
      * your application they'll have access to this key, and access to your user's authentication token
      */
     //!! THIS SHOULD BE IN AN ANDROID KEYSTORE!! See https://developer.android.com/training/articles/keystore.html
-    private static final String SECURE_KEY = "CVPdQNAT6fBI4rrPLEn9x0+UV84DoqLFiNHpKOPLRW0=";
+    private static final String SECURE_KEY = "KXpTjmsUZ6lUiUcaqF6dWFxlIFArLnuHm/DD6Gsal/I=";
 
     /**
      * This method sets up the authentication config needed for

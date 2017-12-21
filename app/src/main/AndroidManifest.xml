@@ -16,7 +16,7 @@
 
         <meta-data
             android:name="com.example.health_companion_uiuc_mobile.CLIENT_ID"
-            android:value="227YZT"/>
+            android:value="22CHG6"/>
         <meta-data
             android:name="com.example.health_companion_uiuc_mobile.REDIRECT_URL"
             android:value="https://finished"/>
