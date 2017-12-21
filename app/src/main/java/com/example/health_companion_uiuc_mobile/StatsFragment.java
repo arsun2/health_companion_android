@@ -122,9 +122,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         if (id == R.id.action_refresh) {
             StatsFragment.getInstance().refresh();
             return true;
-        } else if (id == R.id.action_logout) {
-            AuthenticationManager.logout(getActivity());
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -13,12 +13,13 @@
     <string name="stats">Your Health Data</string>
     <string name="plan">Exercise Plan</string>
     <string name="about">About</string>
+    <string name="logout">Logout</string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_refresh">Refresh</string>
-    <string name="action_logout">Logout</string>
 
     <string name="presented_by_cascade_lab">Presented by\n \n Cascade Lab \n University of Illinois at Urbana-Champaign</string>
 

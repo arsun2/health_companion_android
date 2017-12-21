@@ -19,6 +19,7 @@
             android:layout_marginTop="10dp"
             android:focusable="auto"
             android:focusableInTouchMode="true"
+            android:focusedByDefault="true"
             android:text="Select Date from Your Sports Calendar"
             android:textColor="@color/colorTitle"
             android:textStyle="bold">

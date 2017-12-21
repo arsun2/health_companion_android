@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fitbit.authentication.AuthenticationHandler;
 import com.fitbit.authentication.AuthenticationManager;
@@ -47,6 +48,7 @@ public class RootActivity extends AppCompatActivity implements AuthenticationHan
          *      Otherwise, display the login screen
          */
         if (AuthenticationManager.isLoggedIn()) {
+//            Toast.makeText(this, "Logged In", Toast.LENGTH_SHORT).show();
             onLoggedIn();
         }
     }

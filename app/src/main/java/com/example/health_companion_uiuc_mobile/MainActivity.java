@@ -46,6 +46,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        // load user profile and then start the stat fragment
+        getLoaderManager().initLoader(1, null, this).forceLoad();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -75,9 +83,6 @@ public class MainActivity extends AppCompatActivity
 
         networkOK = NetworkHelper.checkNetworkAccess(this);
         Toast.makeText(this, "Network ok: " + networkOK, Toast.LENGTH_SHORT).show();
-
-        // load user profile and then start the stat fragment
-        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     @Override
@@ -116,6 +121,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_about:
                 fragment = new AboutFragment();
                 title = getString(R.string.about);
+                break;
+            case R.id.nav_logout:
+                AuthenticationManager.logout(this);
                 break;
         }
 
@@ -164,7 +172,10 @@ public class MainActivity extends AppCompatActivity
 
             // display the stat view only after loading the user
             displayView(R.id.nav_stats);
+        } else {
+            AuthenticationManager.logout(this);
         }
+
     }
 
     @Override

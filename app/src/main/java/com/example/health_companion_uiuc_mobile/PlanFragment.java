@@ -51,9 +51,6 @@ public class PlanFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             return true;
-        } else if (id == R.id.action_logout) {
-            AuthenticationManager.logout(getActivity());
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
