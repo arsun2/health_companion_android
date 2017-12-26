@@ -66,6 +66,8 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
     private ColumnChartView chart;
     private PreviewColumnChartView previewChart;
+    float[] caloriesArray;
+    int[] stepsArray;
 
     private int year = 2017;
     private int month = 10;
@@ -371,7 +373,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             previewChart.setColumnChartData(previewData);
             previewChart.setViewportChangeListener(new StatsFragment.ViewportListener());
 
-            previewX(false);
+            previewX(true);
         }
     }
 
@@ -386,13 +388,14 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             // don't use animation, it is unnecessary when using preview chart because usually viewport changes
             // happens to often.
             chart.setCurrentViewport(newViewport);
+            
         }
 
     }
 
     private void previewX(boolean animate) {
         Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-        float dx = tempViewport.width() / 4;
+        float dx = tempViewport.width() * 19 / 40;
         tempViewport.inset(dx, 0);
         if (animate) {
             previewChart.setCurrentViewportWithAnimation(tempViewport);
@@ -407,8 +410,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         int numColumns = 1440; // number of minutes
         String date = year + "-" + month + "-" + day;
 
-        // accumulate calories data for each minutes from JSON result
-        float[] caloriesArray = new float[numColumns];
+        // accumulate calories and step data for each minutes from JSON result
+        caloriesArray = new float[numColumns];
+        stepsArray = new int[numColumns];
 
         try {
             JSONArray streamer = new JSONArray(result);
@@ -425,8 +429,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 int minutes = Integer.valueOf(hour) * 60 + Integer.valueOf(minute);
 
                 float calories = (float) entry.getDouble(1);
+                int steps = entry.getInt(2);
 
                 caloriesArray[minutes] += calories;
+                stepsArray[minutes] += steps;
             }
         } catch (JSONException e) {
             e.printStackTrace();
