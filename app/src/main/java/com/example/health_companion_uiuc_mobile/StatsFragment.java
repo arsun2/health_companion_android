@@ -66,8 +66,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
     private ColumnChartView chart;
     private PreviewColumnChartView previewChart;
-    float[] caloriesArray;
-    int[] stepsArray;
+
+    private int viewportLeft;
+    private int viewportRight;
+
+    private float[] caloriesArray;
+    private int[] stepsArray;
 
     private int year = 2017;
     private int month = 10;
@@ -388,14 +392,30 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             // don't use animation, it is unnecessary when using preview chart because usually viewport changes
             // happens to often.
             chart.setCurrentViewport(newViewport);
-            
+            viewportLeft = (int) Math.round(newViewport.left + 0.5);
+            viewportRight = (int) Math.round(newViewport.right + 0.5);
+
+            calculateRangeData();
         }
 
     }
 
+    private void calculateRangeData() {
+        float totalCal = 0;
+        int totalSteps = 0;
+        for (int i = viewportLeft; i < viewportRight; i++) {
+            totalCal += caloriesArray[i];
+            totalSteps += stepsArray[i];
+        }
+
+        System.out.println("viewport range: " + viewportLeft + ", " + viewportRight);
+        System.out.println("total calories: " + totalCal);
+        System.out.println("total steps: " + totalSteps);
+    }
+
     private void previewX(boolean animate) {
         Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-        float dx = tempViewport.width() * 19 / 40;
+        float dx = tempViewport.width() * 23 / 48;
         tempViewport.inset(dx, 0);
         if (animate) {
             previewChart.setCurrentViewportWithAnimation(tempViewport);
