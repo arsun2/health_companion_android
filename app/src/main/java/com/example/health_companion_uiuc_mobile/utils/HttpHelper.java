@@ -8,32 +8,47 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Helper class for working with a remote server
- */
 public class HttpHelper {
 
-    /**
-     * Returns text from a URL on a web server
-     *
-     * @param address
-     * @return
-     * @throws IOException
-     */
-    public static String downloadUrl(String address) throws IOException {
+    public static String downloadUrl(String url)
+            throws IOException {
+        RequestPackage requestPackage = new RequestPackage();
+        requestPackage.setEndPoint(url);
+        return downloadFromFeed(requestPackage);
+    }
+
+    public static String downloadFromFeed(RequestPackage requestPackage)
+            throws IOException {
+
+        String address = requestPackage.getEndpoint();
+        String encodedParams = requestPackage.getEncodedParams();
+
+        if (requestPackage.getMethod().equals("GET") &&
+                encodedParams.length() > 0) {
+            address = String.format("%s?%s", address, encodedParams);
+        }
 
         InputStream is = null;
         try {
-
             URL url = new URL(address);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(requestPackage.getMethod());
             conn.setDoInput(true);
+
+            if (requestPackage.getMethod().equals("POST") &&
+                    encodedParams.length() > 0) {
+                conn.setDoOutput(true);
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                writer.write(requestPackage.getEncodedParams());
+                writer.flush();
+                writer.close();
+            }
             conn.connect();
 
             int responseCode = conn.getResponseCode();
@@ -53,13 +68,6 @@ public class HttpHelper {
         return null;
     }
 
-    /**
-     * Reads an InputStream and converts it to a String.
-     *
-     * @param stream
-     * @return
-     * @throws IOException
-     */
     private static String readStream(InputStream stream) throws IOException {
 
         byte[] buffer = new byte[1024];

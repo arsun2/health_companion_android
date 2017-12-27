@@ -23,6 +23,10 @@ import android.widget.Toast;
 
 import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
+import com.example.health_companion_uiuc_mobile.utils.RequestPackage;
+import com.fitbit.fitbitcommon.network.BasicHttpRequest;
+import com.fitbit.fitbitcommon.network.BasicHttpRequestBuilder;
+import com.fitbit.fitbitcommon.network.BasicHttpResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +60,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
     private GetActivityAsyncTask mGetActivityAsyncTask;
     private GetLabelAsyncTask mGetLabelAsyncTask;
+    private PostLabelAsyncTask mPostLabelAsyncTask;
 
     private View mView;
     private View mInfoUnavailableView;
@@ -75,6 +80,8 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
     private float[] caloriesArray;
     private int[] stepsArray;
+    private float totalCal;
+    private int totalSteps;
 
     private int year = 2017;
     private int month = 10;
@@ -111,22 +118,19 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 if ("".equals(name) || "".equals(feeling)) {
                     Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), name + ", " + feeling, Toast.LENGTH_SHORT).show();
-
+                    String startTime = "";
+                    String endTime = "";
+                    mPostLabelAsyncTask = new PostLabelAsyncTask();
+                    mPostLabelAsyncTask.execute("52KG77", startTime, endTime, name,
+                            Integer.toString(totalSteps), Float.toString(totalCal), feeling);
                 }
-
-//                Toast.makeText(getActivity(), "New Label Submitted Successfully", Toast.LENGTH_SHORT).show();
-
                 break;
             case R.id.reset_selection:
                 mActivityNameEditText.getText().clear();
                 mActivityFeelingEditText.getText().clear();
                 previewX(true);
                 break;
-
         }
-
-
     }
 
     @Override
@@ -272,6 +276,66 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
+     * Create a new AsynTask to submit labels to Azure
+     */
+    private class PostLabelAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = null;
+            String url = "http://health-companion-uiuc.azurewebsites.net/insertLabel";
+
+            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
+                Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    RequestPackage requestPackage = new RequestPackage();
+                    requestPackage.setEndPoint(url);
+                    requestPackage.setMethod("POST");
+                    requestPackage.setParam("user_id", strings[0]);
+                    requestPackage.setParam("periodStart", strings[1]);
+                    requestPackage.setParam("periodEnd", strings[2]);
+                    requestPackage.setParam("labelName", strings[3]);
+                    requestPackage.setParam("steps", strings[4]);
+                    requestPackage.setParam("cals", strings[5]);
+                    requestPackage.setParam("subjTag", strings[6]);
+
+                    result = HttpHelper.downloadFromFeed(requestPackage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Display progress bar
+            mReloadingListProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onCancelled() {
+            // Remove progress bar
+            mReloadingListProgressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // Remove progress bar
+            mReloadingListProgressBar.setVisibility(View.GONE);
+            System.out.println("result: " + result);
+            if ("ok, label saved".equals(result)) {
+                Toast.makeText(getActivity(), "New Label Submitted Successfully", Toast.LENGTH_LONG).show();
+                getLabelData();
+            } else {
+                Toast.makeText(getActivity(), "Failed to Submit New Label", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
      * Create a new AsynTask to fetch labels from Azure
      */
     private class GetLabelAsyncTask extends AsyncTask<Void, Void, String> {
@@ -285,7 +349,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         @Override
         protected String doInBackground(Void... voids) {
             String result = null;
-            String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + userID;
+            String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + "52KG77";
             System.out.println(url);
 
             if (!NetworkHelper.checkNetworkAccess(getActivity())) {
@@ -446,8 +510,8 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateRangeData() {
-        float totalCal = 0;
-        int totalSteps = 0;
+        totalCal = 0;
+        totalSteps = 0;
         for (int i = viewportLeft; i < viewportRight; i++) {
             totalCal += caloriesArray[i];
             totalSteps += stepsArray[i];
