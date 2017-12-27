@@ -164,7 +164,8 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            StatsFragment.getInstance().refresh();
+            refresh();
+
             return true;
         }
 
@@ -227,6 +228,8 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     }
 
     public void refresh() {
+        mActivityNameEditText.getText().clear();
+        mActivityFeelingEditText.getText().clear();
         getActivityData();
         getLabelData();
     }
@@ -391,7 +394,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             try {
                 JSONArray streamer = new JSONArray(result);
                 String label = "";
-                for (int i = 0; i < streamer.length(); i++) {
+                for (int i = streamer.length() - 1; i >= 0; i--) {
                     label = streamer.getString(i);
                     JSONArray labelStreamer = new JSONArray(label);
                     String activity = new JSONArray(labelStreamer.getString(2)).getString(0);

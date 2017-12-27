@@ -205,7 +205,7 @@
         <ListView
             android:id="@+id/label_list"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
