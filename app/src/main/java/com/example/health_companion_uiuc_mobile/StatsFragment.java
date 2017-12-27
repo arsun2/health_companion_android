@@ -102,6 +102,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
+    private String fillZero(int num) {
+        return (num < 10)? "0" + num : "" + num;
+    }
+
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
@@ -118,8 +122,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 if ("".equals(name) || "".equals(feeling)) {
                     Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
                 } else {
-                    String startTime = "";
-                    String endTime = "";
+                    String startTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
+                            fillZero(viewportLeft / 60) + ":" + fillZero(viewportLeft % 60) + ":00-05:00";
+                    String endTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
+                            fillZero(viewportRight / 60) + ":" + fillZero(viewportRight % 60) + ":00-05:00";;
                     mPostLabelAsyncTask = new PostLabelAsyncTask();
                     mPostLabelAsyncTask.execute("52KG77", startTime, endTime, name,
                             Integer.toString(totalSteps), Float.toString(totalCal), feeling);
