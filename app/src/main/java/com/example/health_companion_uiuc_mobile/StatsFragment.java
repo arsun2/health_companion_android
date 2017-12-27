@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
-import com.fitbit.authentication.AuthenticationManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -273,10 +272,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
-            LabelEntryViewHolder holder;
-            holder = new LabelEntryViewHolder();
-            holder.labelsTextView = (TextView) mView.findViewById(R.id.label_header);
-            holder.labelsTextView.setText("Labels for Your Daily Life");
+            mView.findViewById(R.id.label_header).setVisibility(View.VISIBLE);
 
             labelsListAdapter.clearMessages();
             try {
@@ -378,6 +374,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             previewChart.setViewportChangeListener(new StatsFragment.ViewportListener());
 
             previewX(true);
+
+            // label creation
+            mView.findViewById(R.id.label_creation_header).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.activity_name).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.activity_feeling).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.label_creation_buttons).setVisibility(View.VISIBLE);
         }
     }
 
@@ -395,12 +397,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             viewportLeft = (int) Math.round(newViewport.left + 0.5);
             viewportRight = (int) Math.round(newViewport.right + 0.5);
 
-            calculateRangeData();
+            updateRangeData();
         }
 
     }
 
-    private void calculateRangeData() {
+    private void updateRangeData() {
         float totalCal = 0;
         int totalSteps = 0;
         for (int i = viewportLeft; i < viewportRight; i++) {
@@ -408,9 +410,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             totalSteps += stepsArray[i];
         }
 
-        System.out.println("viewport range: " + viewportLeft + ", " + viewportRight);
-        System.out.println("total calories: " + totalCal);
-        System.out.println("total steps: " + totalSteps);
+        StatsFragment.LabelEntryViewHolder holder = new StatsFragment.LabelEntryViewHolder();
+        holder.labelsTextView = (TextView) mView.findViewById(R.id.label_creation_description);
+//        String time = "Start time: " + getTimeFormat(viewportLeft / 60, viewportLeft % 60)
+//                + "      End time: " + getTimeFormat(viewportRight / 60, viewportRight % 60) + "\n";
+        String rangeData = "Calories: " + new DecimalFormat("#.###").format(totalCal) + "        Steps: " + totalSteps;
+        holder.labelsTextView.setText(rangeData);
     }
 
     private void previewX(boolean animate) {
@@ -471,17 +476,19 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         }
 
         ColumnChartData data = new ColumnChartData(columns);
-        data.setAxisXBottom(getAxisXWithLabels());
         data.setAxisYLeft(new Axis().setHasLines(true));
 
         // prepare preview data, is better to use separate deep copy for preview chart.
         // set color to grey to make preview area more visible.
         ColumnChartData previewData = new ColumnChartData(data);
-        for (Column column : previewData.getColumns()) {
-            for (SubcolumnValue value : column.getValues()) {
-                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
-            }
-        }
+//        for (Column column : previewData.getColumns()) {
+//            for (SubcolumnValue value : column.getValues()) {
+//                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
+//            }
+//        }
+
+        data.setAxisXBottom(getAxisXWithLabels(30));
+        previewData.setAxisXBottom(getAxisXWithLabels(60));
 
         ColumnChartData[] results = new ColumnChartData[2];
         results[0] = data;
@@ -490,22 +497,50 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private Axis getAxisXWithLabels() {
+    private Axis getAxisXWithLabels(int step) {
         List<AxisValue> values = new ArrayList<AxisValue>();
 
-        for (int i = 60; i < 1440; i += 60) {
+        for (int i = 0; i < 1440; i += step) {
             AxisValue axisValue = new AxisValue((float) i);
             int hour = i / 60;
-            if (hour > 12) {
-                axisValue = axisValue.setLabel((hour - 12) + " PM");
-            } else if (hour == 12) {
-                axisValue = axisValue.setLabel("12 PM");
-            } else {
-                axisValue = axisValue.setLabel(hour + " AM");
-            }
+            int minutes = i % 60;
+            axisValue = axisValue.setLabel(getTimeFormat(hour, minutes));
             values.add(axisValue);
         }
 
         return new Axis(values);
+    }
+
+    private String getTimeFormat(int hour, int minutes) {
+        StringBuilder sb = new StringBuilder();
+        if (hour == 0 || hour == 24) {
+            sb.append(12);
+            appendMinute(minutes, sb);
+            sb.append(" AM");
+        } else if (hour > 12) {
+            sb.append(hour - 12);
+            appendMinute(minutes, sb);
+            sb.append(" PM");
+        } else if (hour == 12) {
+            sb.append(12);
+            appendMinute(minutes, sb);
+            sb.append(" PM");
+        } else {
+            sb.append(hour);
+            appendMinute(minutes, sb);
+            sb.append(" AM");
+        }
+
+        return sb.toString();
+    }
+
+    private void appendMinute(int minutes, StringBuilder sb) {
+        if (minutes != 0) {
+            if (minutes < 10) {
+                sb.append(":0" + minutes);
+            } else {
+                sb.append(":" + minutes);
+            }
+        }
     }
 }

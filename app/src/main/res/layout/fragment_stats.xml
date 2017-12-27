@@ -87,8 +87,8 @@
             android:textStyle="bold">
         </TextView>
 
-        <lecho.lib.hellocharts.view.ColumnChartView
-            android:id="@+id/chart"
+        <lecho.lib.hellocharts.view.PreviewColumnChartView
+            android:id="@+id/chart_preview"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:paddingStart="8dp"
@@ -104,22 +104,90 @@
             android:layout_marginTop="8dp"
             android:background="@android:color/darker_gray" />
 
-        <lecho.lib.hellocharts.view.PreviewColumnChartView
-            android:id="@+id/chart_preview"
+        <TextView
+            android:id="@+id/label_creation_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/colorTitle"
+            android:text="You can label the selected time interval:"
+            android:visibility="gone"
+            android:textSize="13sp"
+            android:layout_marginTop="6dp" />
+
+        <lecho.lib.hellocharts.view.ColumnChartView
+            android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="16dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="22dp"
             android:layout_weight="1"
-            android:paddingTop="17dp" />
+            android:paddingTop="15dp" />
 
-        <!--<TextView-->
-            <!--android:id="@+id/label_section"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="@dimen/default_padding_left"-->
-            <!--android:layout_marginRight="@dimen/default_padding_right"-->
-            <!--android:layout_marginTop="20dp" />-->
+        <TextView
+            android:id="@+id/label_creation_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:textColor="@color/colorTitle"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/activity_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="-3dp"
+            android:layout_marginBottom="-10dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:hint="Activity (e.g. Walking to Siebel)"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/activity_feeling"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:hint="Feeling (e.g. refreshing)"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/label_creation_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/submit_label"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Submit"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/reset_selection"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Reset"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
 
         <TextView
             android:id="@+id/label_header"
@@ -129,16 +197,18 @@
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
             android:layout_marginTop="20dp"
+            android:visibility="gone"
             android:textColor="@color/colorTitle"
+            android:text="Labels for Your Daily Life"
             android:textStyle="bold" />
 
         <ListView
             android:id="@+id/label_list"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginLeft="@dimen/default_padding_left"
             android:layout_marginRight="@dimen/default_padding_right"
-            android:layout_marginBottom="20dp"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:scrollbars="vertical" />
