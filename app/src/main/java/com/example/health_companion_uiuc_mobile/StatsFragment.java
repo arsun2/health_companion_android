@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,6 +67,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private ColumnChartView chart;
     private PreviewColumnChartView previewChart;
 
+    private EditText mActivityNameEditText;
+    private EditText mActivityFeelingEditText;
+
     private int viewportLeft;
     private int viewportRight;
 
@@ -92,12 +96,37 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    /**
-     * click "select date" button
-     */
     public void onClick(View view) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(),"Date Picker");
+        int viewId = view.getId();
+
+        switch (viewId) {
+            case R.id.select_date:
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getFragmentManager(),"Date Picker");
+                break;
+            case R.id.submit_label:
+                String name = mActivityNameEditText.getText().toString();
+                String feeling = mActivityFeelingEditText.getText().toString();
+
+                if ("".equals(name) || "".equals(feeling)) {
+                    Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), name + ", " + feeling, Toast.LENGTH_SHORT).show();
+
+                }
+
+//                Toast.makeText(getActivity(), "New Label Submitted Successfully", Toast.LENGTH_SHORT).show();
+
+                break;
+            case R.id.reset_selection:
+                mActivityNameEditText.getText().clear();
+                mActivityFeelingEditText.getText().clear();
+                previewX(true);
+                break;
+
+        }
+
+
     }
 
     @Override
@@ -149,20 +178,34 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         mReloadingListProgressBar = mView.findViewById(R.id.loading_progress_bar);
         mInfoUnavailableView = mView.findViewById(R.id.info_unavailable);
 
+        // charts
         chart = (ColumnChartView) mView.findViewById(R.id.chart);
         previewChart = (PreviewColumnChartView) mView.findViewById(R.id.chart_preview);
 
-        mLabelsListView = (ListView) mView.findViewById(R.id.label_list);
-        ViewCompat.setNestedScrollingEnabled(mLabelsListView, true);
-
+        // bind all buttons
         Button b = (Button) mView.findViewById(R.id.select_date);
         b.setOnClickListener(this);
+
+        b = (Button) mView.findViewById(R.id.submit_label);
+        b.setOnClickListener(this);
+
+        b = (Button) mView.findViewById(R.id.reset_selection);
+        b.setOnClickListener(this);
+
+        // edit texts
+        mActivityNameEditText = (EditText) mView.findViewById(R.id.activity_name);
+        mActivityFeelingEditText = (EditText) mView.findViewById(R.id.activity_feeling);
+
+        // initialize label list
+        mLabelsListView = (ListView) mView.findViewById(R.id.label_list);
+        ViewCompat.setNestedScrollingEnabled(mLabelsListView, true);
 
         if (labelsListAdapter == null) {
             labelsListAdapter = new LabelsListAdapter(getActivity());
         }
         mLabelsListView.setAdapter(labelsListAdapter);
 
+        // present page
         refresh();
     }
 
