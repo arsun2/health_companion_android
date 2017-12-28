@@ -46,11 +46,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // load user profile and then start the stat fragment
-        getLoaderManager().initLoader(1, null, this).forceLoad();
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -83,6 +80,9 @@ public class MainActivity extends AppCompatActivity
 
         networkOK = NetworkHelper.checkNetworkAccess(this);
         Toast.makeText(this, "Network ok: " + networkOK, Toast.LENGTH_SHORT).show();
+
+        // load user profile and then start the stat fragment
+        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     @Override
