@@ -171,7 +171,9 @@ public class MainActivity extends AppCompatActivity
             user = data.getResult().getUser();
 
             // display the stat view only after loading the user
-            displayView(R.id.nav_stats);
+//            displayView(R.id.nav_stats);
+
+            displayView(R.id.nav_plan);
         } else {
             AuthenticationManager.logout(this);
         }
