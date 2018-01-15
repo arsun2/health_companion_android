@@ -28,7 +28,7 @@ android:scrollbars="none">
         android:focusable="auto"
         android:focusableInTouchMode="true"
         android:focusedByDefault="true"
-        android:text="Select Date for Your Exercise Plan"
+        android:text="Select Date from Your Sports Calendar"
         android:textColor="@color/colorTitle"
         android:textStyle="bold">
 
@@ -84,7 +84,7 @@ android:scrollbars="none">
     </FrameLayout>
 
     <TextView
-        android:id="@+id/activity_header"
+        android:id="@+id/plan_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_padding_left"
