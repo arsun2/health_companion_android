@@ -1,5 +1,6 @@
 package com.example.health_companion_uiuc_mobile;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -13,6 +14,17 @@ import java.util.Calendar;
  */
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+    private int index = 0;
+
+    public DatePickerFragment() {
+    }
+
+    @SuppressLint("ValidFragment")
+    public DatePickerFragment(int index) {
+        this();
+        this.index = index;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -31,6 +43,11 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        StatsFragment.getInstance().updateDate(year, month + 1, day);
+        if (index == 1) {
+            PlanFragment.getInstance().updateDate(year, month + 1, day);
+        }
+        if (index == 0) {
+            StatsFragment.getInstance().updateDate(year, month + 1, day);
+        }
     }
 }

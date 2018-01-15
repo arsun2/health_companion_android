@@ -1,16 +1,159 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/scroll"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:scrollbars="none">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="com.example.health_companion_uiuc_mobile.PlanFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="@dimen/default_padding_left"-->
+        <!--android:layout_marginRight="@dimen/default_padding_left"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:text="On this page, you can browse your exercise plan." />-->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_padding_left"
-        android:layout_marginRight="@dimen/default_padding_left"
-        android:layout_marginTop="20dp"
-        android:text="On this page, I will help you develop an exercise plan for the coming month." />
+        android:layout_marginRight="@dimen/default_padding_right"
+        android:layout_marginTop="10dp"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:focusedByDefault="true"
+        android:text="Select Date for Your Exercise Plan"
+        android:textColor="@color/colorTitle"
+        android:textStyle="bold">
 
-</FrameLayout>
+        <requestFocus />
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/select_date"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="Select Date"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/info_unavailable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="oops" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="please try again" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/activity_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_padding_left"
+        android:layout_marginRight="@dimen/default_padding_right"
+        android:layout_marginTop="17dp"
+        android:focusable="auto"
+        android:textColor="@color/colorTitle"
+        android:textStyle="bold">
+    </TextView>
+
+    <lecho.lib.hellocharts.view.PreviewColumnChartView
+        android:id="@+id/chart_preview"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
+        android:layout_weight="1"
+        android:paddingTop="17dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="@dimen/default_padding_left"
+        android:layout_marginRight="@dimen/default_padding_right"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray" />
+
+    <lecho.lib.hellocharts.view.ColumnChartView
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="22dp"
+        android:layout_weight="1"
+        android:paddingTop="15dp" />
+
+
+
+
+
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/label_header"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:layout_marginLeft="@dimen/default_padding_left"-->
+        <!--android:layout_marginRight="@dimen/default_padding_right"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:textColor="@color/colorTitle"-->
+        <!--android:text="Labels for Your Daily Life"-->
+        <!--android:textStyle="bold" />-->
+
+    <!--<ListView-->
+        <!--android:id="@+id/label_list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="150dp"-->
+        <!--android:layout_marginBottom="20dp"-->
+        <!--android:layout_marginLeft="@dimen/default_padding_left"-->
+        <!--android:layout_marginRight="@dimen/default_padding_right"-->
+        <!--android:divider="@null"-->
+        <!--android:dividerHeight="0dp"-->
+        <!--android:scrollbars="vertical" />-->
+
+
+</LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>
+
