@@ -122,12 +122,14 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 if ("".equals(name) || "".equals(feeling)) {
                     Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
                 } else {
+                    // TODO: what is the correct time format to be passed to the nodejs backend
                     String startTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
                             fillZero(viewportLeft / 60) + ":" + fillZero(viewportLeft % 60) + ":00-05:00";
                     String endTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
-                            fillZero(viewportRight / 60) + ":" + fillZero(viewportRight % 60) + ":00-05:00";;
+                            fillZero(viewportRight / 60) + ":" + fillZero(viewportRight % 60) + ":00-05:00";
+
                     mPostLabelAsyncTask = new PostLabelAsyncTask();
-                    mPostLabelAsyncTask.execute("52KG77", startTime, endTime, name,
+                    mPostLabelAsyncTask.execute(userID, startTime, endTime, name,
                             Integer.toString(totalSteps), Float.toString(totalCal), feeling);
                 }
                 break;
@@ -145,7 +147,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         if (getArguments() != null) {
             userID = getArguments().getString("userID");
         }
-//        Toast.makeText(getActivity(), "Here! " + userID, Toast.LENGTH_LONG).show();
         setHasOptionsMenu(true);
     }
 
@@ -165,7 +166,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             refresh();
-
             return true;
         }
 
@@ -242,14 +242,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private void getLabelData() {
         mGetLabelAsyncTask = new GetLabelAsyncTask();
         mGetLabelAsyncTask.execute();
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -358,7 +350,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         @Override
         protected String doInBackground(Void... voids) {
             String result = null;
-            String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + "52KG77";
+            String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + userID;
             System.out.println(url);
 
             if (!NetworkHelper.checkNetworkAccess(getActivity())) {
@@ -595,8 +587,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         data.setAxisYLeft(new Axis().setHasLines(true));
 
         // prepare preview data, is better to use separate deep copy for preview chart.
-        // set color to grey to make preview area more visible.
         ColumnChartData previewData = new ColumnChartData(data);
+
+//        // set color to grey to make preview area more visible.
 //        for (Column column : previewData.getColumns()) {
 //            for (SubcolumnValue value : column.getValues()) {
 //                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
