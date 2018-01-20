@@ -50,7 +50,6 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
     private ProgressBar mReloadingListProgressBar;
 
     private ColumnChartView chart;
-    private PreviewColumnChartView previewChart;
 
     private int year = 2017;
     private int month = 10;
@@ -136,7 +135,6 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
 
         // charts
         chart = (ColumnChartView) mView.findViewById(R.id.chart);
-        previewChart = (PreviewColumnChartView) mView.findViewById(R.id.chart_preview);
 
         // bind all buttons
         Button b = (Button) mView.findViewById(R.id.select_date);
@@ -158,14 +156,6 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
 //        Toast.makeText(getActivity(), month + "/" + day + "/" + year, Toast.LENGTH_SHORT).show();
         mGetPlanAsyncTask = new GetPlanAsyncTask(year, month, day);
         mGetPlanAsyncTask.execute();
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -222,9 +212,9 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected String doInBackground(Void... voids) {
+            // TODO: construct the proper url
             String url = "http://health-companion-uiuc.azurewebsites.net/getPlan?userID=52KG66&sdate=2017-10-08&edate=2017-10-09&planset=A";
-//            String url = "http://health-companion-uiuc.azurewebsites.net/getactivity?userid=" + userID + "&daysBefore=0&today=" + year + "-" + month + "-" + day;
-//            System.out.println(url);
+
             String result = null;
 
 //            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
@@ -259,6 +249,8 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
             holder = new PlanFragment.LabelEntryViewHolder();
             holder.labelsTextView = (TextView) mView.findViewById(R.id.plan_header);
             holder.labelsTextView.setText("Exercise Plan for " + month + "/" + day + "/" + year);
+
+            // TODO: populate the ColumnChart with the result data
 
         }
     }

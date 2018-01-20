@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity
             // display the stat view only after loading the user
 //            displayView(R.id.nav_stats);
 
-            displayView(R.id.nav_plan);
+            displayView(R.id.nav_stats);
         } else {
             AuthenticationManager.logout(this);
         }

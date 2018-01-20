@@ -95,27 +95,10 @@ android:scrollbars="none">
         android:textStyle="bold">
     </TextView>
 
-    <lecho.lib.hellocharts.view.PreviewColumnChartView
-        android:id="@+id/chart_preview"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp"
-        android:layout_weight="1"
-        android:paddingTop="17dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/default_padding_left"
-        android:layout_marginRight="@dimen/default_padding_right"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/darker_gray" />
-
     <lecho.lib.hellocharts.view.ColumnChartView
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="300dp"
         android:paddingStart="14dp"
         android:paddingEnd="22dp"
         android:layout_weight="1"
