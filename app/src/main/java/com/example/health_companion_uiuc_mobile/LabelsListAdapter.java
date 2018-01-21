@@ -10,9 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by Joe on 12/16/17.
+ * List adapter for labels
  */
-
 public class LabelsListAdapter extends BaseAdapter {
 
     private final ArrayList<String> mLabels;
@@ -35,20 +34,28 @@ public class LabelsListAdapter extends BaseAdapter {
         mLayoutInflater = LayoutInflater.from(context);
     }
 
+    /**
+     *  Add new label
+     *  @param label new label to be added
+     */
     void addLabel(String label) {
         mLabels.add(label);
         notifyDataSetChanged();
     }
 
     /**
-     * Convenience method to clear all messages from the underlying
-     * data store and update the UI.
+     *  Convenience method to clear all messages from the underlying
+     *  data store and update the UI.
      */
     void clearMessages() {
         mLabels.clear();
         this.notifyDataSetChanged();
     }
 
+    /**
+     *  Clear the current list of labels and add a new set of labels
+     *  @param data new list of labels to be added
+     */
     void setData(ArrayList<String> data) {
         mLabels.clear();
         mLabels.addAll(data);

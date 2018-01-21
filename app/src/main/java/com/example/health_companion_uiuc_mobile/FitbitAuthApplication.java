@@ -1,3 +1,8 @@
+/**
+ * Created by jboggess on 9/28/16.
+ * Source: https://github.com/Stasonis/fitbit-api-example-android
+ */
+
 package com.example.health_companion_uiuc_mobile;
 
 import android.app.Activity;
@@ -15,11 +20,6 @@ import com.fitbit.authentication.ClientCredentials;
 import com.fitbit.authentication.Scope;
 
 import static com.fitbit.authentication.Scope.activity;
-
-/**
- * Created by jboggess on 9/28/16.
- * https://github.com/Stasonis/fitbit-api-example-android
- */
 
 public class FitbitAuthApplication extends Application {
 

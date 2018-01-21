@@ -1,3 +1,8 @@
+/**
+ * Created by jboggess on 9/28/16.
+ * Source: https://github.com/Stasonis/fitbit-api-example-android
+ */
+
 package com.example.health_companion_uiuc_mobile;
 
 import android.content.DialogInterface;
@@ -48,7 +53,6 @@ public class RootActivity extends AppCompatActivity implements AuthenticationHan
          *      Otherwise, display the login screen
          */
         if (AuthenticationManager.isLoggedIn()) {
-//            Toast.makeText(this, "Logged In", Toast.LENGTH_SHORT).show();
             onLoggedIn();
         }
     }

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,22 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
-import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
-import com.fitbit.authentication.AuthenticationManager;
-
-import java.io.IOException;
-
-import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.view.ColumnChartView;
-import lecho.lib.hellocharts.view.PreviewColumnChartView;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +28,6 @@ import lecho.lib.hellocharts.view.PreviewColumnChartView;
 public class PlanFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
-
     private GetPlanAsyncTask mGetPlanAsyncTask;
 
     private View mView;
@@ -56,64 +42,37 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
     private int day = 2;
     private String userID = "";
 
+    /**
+     *  View holder object for holding the output.
+     */
     private static class LabelEntryViewHolder {
         public TextView labelsTextView;
     }
 
-    public PlanFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     *  For DatePickerFragment to get an instance of this fragment to update date
+     */
     private static PlanFragment fragment = null;
 
     public static PlanFragment getInstance(){
         return fragment;
     }
 
-    @Override
-    public void onClick(View view) {
-        int viewId = view.getId();
-        switch (viewId) {
-            case R.id.select_date:
-                DialogFragment newFragment = new DatePickerFragment(1);
-                newFragment.show(getFragmentManager(),"Date Picker");
-                break;
-        }
-    }
+    /**
+     *  Required empty public constructor
+     */
+    public PlanFragment() {}
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get userID from the bundle passed from activity
         if (getArguments() != null) {
             userID = getArguments().getString("userID");
         }
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            refresh();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void refresh() {
-        getPlanData();
     }
 
     @Override
@@ -144,18 +103,36 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
         refresh();
     }
 
-    public void updateDate(int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        getPlanData();
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void getPlanData() {
-//        Toast.makeText(getActivity(), userID, Toast.LENGTH_SHORT).show();
-//        Toast.makeText(getActivity(), month + "/" + day + "/" + year, Toast.LENGTH_SHORT).show();
-        mGetPlanAsyncTask = new GetPlanAsyncTask(year, month, day);
-        mGetPlanAsyncTask.execute();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            refresh();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int viewId = view.getId();
+        switch (viewId) {
+            case R.id.select_date:
+                DialogFragment newFragment = new DatePickerFragment(1);
+                newFragment.show(getFragmentManager(),"Date Picker");
+                break;
+        }
     }
 
     @Override
@@ -186,18 +163,49 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+
     /**
-     * Create a new AsynTask to fetch activity data from Azure
+     *  Update date info and get the plan data using this updated date
+     *  @param day new day data
+     *  @param month new month data
+     *  @param year new year data
+     */
+    public void updateDate(int year, int month, int day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        getPlanData();
+    }
+
+    /**
+     *  refresh the page
+     */
+    private void refresh() {
+        getPlanData();
+    }
+
+    /**
+     *  New an async task to get plan data from the server using the existing date
+     */
+    private void getPlanData() {
+        mGetPlanAsyncTask = new GetPlanAsyncTask(year, month, day);
+        mGetPlanAsyncTask.execute();
+    }
+
+    /**
+     *  AsyncTask to fetch plan data from Azure server
      */
     class GetPlanAsyncTask extends AsyncTask<Void, Void, String> {
         private String year;
         private String month;
         private String day;
 
+        /**
+         *  Constructor: reformat date info
+         */
         public GetPlanAsyncTask(int year, int month, int day) {
             this.year = Integer.toString(year);
             this.month = month < 10? "0" + month : "" + month;
@@ -241,16 +249,19 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
             // Remove progress bar
             mReloadingListProgressBar.setVisibility(View.GONE);
 
+//            // If no result, stop immediately
 //            if (result == null) {
 //                return;
 //            }
 
+            // Show plan header
             PlanFragment.LabelEntryViewHolder holder;
             holder = new PlanFragment.LabelEntryViewHolder();
             holder.labelsTextView = (TextView) mView.findViewById(R.id.plan_header);
             holder.labelsTextView.setText("Exercise Plan for " + month + "/" + day + "/" + year);
 
-            // TODO: populate the ColumnChart with the result data
+            // TODO: populate the ColumnChart with the result data (similar to StatsFragment)
+            // Ref: https://github.com/lecho/hellocharts-android/blob/master/hellocharts-samples/src/lecho/lib/hellocharts/samples/ColumnChartActivity.java
 
         }
     }

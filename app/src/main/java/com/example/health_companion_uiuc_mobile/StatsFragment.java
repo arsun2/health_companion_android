@@ -24,16 +24,12 @@ import android.widget.Toast;
 import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
 import com.example.health_companion_uiuc_mobile.utils.RequestPackage;
-import com.fitbit.fitbitcommon.network.BasicHttpRequest;
-import com.fitbit.fitbitcommon.network.BasicHttpRequestBuilder;
-import com.fitbit.fitbitcommon.network.BasicHttpResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,88 +84,37 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private int day = 2;
     private String userID = "";
 
+    /**
+     *  View holder object for holding the output.
+     */
     private static class LabelEntryViewHolder {
         public TextView labelsTextView;
     }
 
-    public StatsFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     *  For DatePickerFragment to get an instance of this fragment to update date
+     */
     private static StatsFragment fragment = null;
 
     public static StatsFragment getInstance(){
         return fragment;
     }
 
-    private String fillZero(int num) {
-        return (num < 10)? "0" + num : "" + num;
-    }
+    /**
+     *  Required empty public constructor
+     */
+    public StatsFragment() {}
 
-    @Override
-    public void onClick(View view) {
-        int viewId = view.getId();
-
-        switch (viewId) {
-            case R.id.select_date:
-                DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(getFragmentManager(),"Date Picker");
-                break;
-            case R.id.submit_label:
-                String name = mActivityNameEditText.getText().toString();
-                String feeling = mActivityFeelingEditText.getText().toString();
-
-                if ("".equals(name) || "".equals(feeling)) {
-                    Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
-                } else {
-                    // TODO: what is the correct time format to be passed to the nodejs backend
-                    String startTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
-                            fillZero(viewportLeft / 60) + ":" + fillZero(viewportLeft % 60) + ":00-05:00";
-                    String endTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
-                            fillZero(viewportRight / 60) + ":" + fillZero(viewportRight % 60) + ":00-05:00";
-
-                    mPostLabelAsyncTask = new PostLabelAsyncTask();
-                    mPostLabelAsyncTask.execute(userID, startTime, endTime, name,
-                            Integer.toString(totalSteps), Float.toString(totalCal), feeling);
-                }
-                break;
-            case R.id.reset_selection:
-                mActivityNameEditText.getText().clear();
-                mActivityFeelingEditText.getText().clear();
-                previewX(true);
-                break;
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get userID from the bundle passed from activity
         if (getArguments() != null) {
             userID = getArguments().getString("userID");
         }
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            refresh();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -220,28 +165,60 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         refresh();
     }
 
-    public void updateDate(int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        getActivityData();
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void refresh() {
-        mActivityNameEditText.getText().clear();
-        mActivityFeelingEditText.getText().clear();
-        getActivityData();
-        getLabelData();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            refresh();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
-    private void getActivityData() {
-        mGetActivityAsyncTask = new GetActivityAsyncTask(year, month, day);
-        mGetActivityAsyncTask.execute();
-    }
+    @Override
+    public void onClick(View view) {
+        int viewId = view.getId();
 
-    private void getLabelData() {
-        mGetLabelAsyncTask = new GetLabelAsyncTask();
-        mGetLabelAsyncTask.execute();
+        switch (viewId) {
+            case R.id.select_date:
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getFragmentManager(),"Date Picker");
+                break;
+            case R.id.submit_label:
+                String name = mActivityNameEditText.getText().toString();
+                String feeling = mActivityFeelingEditText.getText().toString();
+
+                if ("".equals(name) || "".equals(feeling)) {
+                    Toast.makeText(getActivity(), "Necessary Information Missed", Toast.LENGTH_SHORT).show();
+                } else {
+                    // TODO: what is the correct time format to be passed to the nodejs backend
+                    String startTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
+                            fillZero(viewportLeft / 60) + ":" + fillZero(viewportLeft % 60) + ":00-05:00";
+                    String endTime = year + "-" + fillZero(month) + "-" + fillZero(day) + "T" +
+                            fillZero(viewportRight / 60) + ":" + fillZero(viewportRight % 60) + ":00-05:00";
+
+                    mPostLabelAsyncTask = new PostLabelAsyncTask();
+                    mPostLabelAsyncTask.execute(userID, startTime, endTime, name,
+                            Integer.toString(totalSteps), Float.toString(totalCal), feeling);
+                }
+                break;
+            case R.id.reset_selection:
+                mActivityNameEditText.getText().clear();
+                mActivityFeelingEditText.getText().clear();
+                previewX(true);
+                break;
+        }
     }
 
     @Override
@@ -272,72 +249,52 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+
     /**
-     * Create a new AsynTask to submit labels to Azure
+     *  Update date info and get the activity data using this updated date
+     *  @param day new day data
+     *  @param month new month data
+     *  @param year new year data
      */
-    private class PostLabelAsyncTask extends AsyncTask<String, Void, String> {
+    public void updateDate(int year, int month, int day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
 
-        @Override
-        protected String doInBackground(String... strings) {
-            String result = null;
-            String url = "http://health-companion-uiuc.azurewebsites.net/insertLabel";
-
-            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
-                Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
-            } else {
-                try {
-                    RequestPackage requestPackage = new RequestPackage();
-                    requestPackage.setEndPoint(url);
-                    requestPackage.setMethod("POST");
-                    requestPackage.setParam("user_id", strings[0]);
-                    requestPackage.setParam("periodStart", strings[1]);
-                    requestPackage.setParam("periodEnd", strings[2]);
-                    requestPackage.setParam("labelName", strings[3]);
-                    requestPackage.setParam("steps", strings[4]);
-                    requestPackage.setParam("cals", strings[5]);
-                    requestPackage.setParam("subjTag", strings[6]);
-
-                    result = HttpHelper.downloadFromFeed(requestPackage);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // Display progress bar
-            mReloadingListProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onCancelled() {
-            // Remove progress bar
-            mReloadingListProgressBar.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            // Remove progress bar
-            mReloadingListProgressBar.setVisibility(View.GONE);
-            System.out.println("result: " + result);
-            if ("ok, label saved".equals(result)) {
-                Toast.makeText(getActivity(), "New Label Submitted Successfully", Toast.LENGTH_LONG).show();
-                getLabelData();
-            } else {
-                Toast.makeText(getActivity(), "Failed to Submit New Label", Toast.LENGTH_LONG).show();
-            }
-        }
+        getActivityData();
     }
 
     /**
-     * Create a new AsynTask to fetch labels from Azure
+     *  refresh the page
+     */
+    public void refresh() {
+        mActivityNameEditText.getText().clear();
+        mActivityFeelingEditText.getText().clear();
+        getActivityData();
+        getLabelData();
+    }
+
+    /**
+     *  New an async task to get activity data from the server using the existing date
+     */
+    private void getActivityData() {
+        mGetActivityAsyncTask = new GetActivityAsyncTask(year, month, day);
+        mGetActivityAsyncTask.execute();
+    }
+
+    /**
+     *  New an async task to get label data from the server
+     */
+    private void getLabelData() {
+        mGetLabelAsyncTask = new GetLabelAsyncTask();
+        mGetLabelAsyncTask.execute();
+    }
+
+    /**
+     *  AsyncTask to fetch labels from the Azure server
      */
     private class GetLabelAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -380,8 +337,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
+            // Show label header
             mView.findViewById(R.id.label_header).setVisibility(View.VISIBLE);
 
+            // extract labels from the result String and put them into adapter
             labelsListAdapter.clearMessages();
             try {
                 JSONArray streamer = new JSONArray(result);
@@ -397,13 +356,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
                     labelsListAdapter.addLabel(label);
                 }
-
-//                LabelEntryViewHolder holder;
-//                holder = new LabelEntryViewHolder();
-//                holder.labelsTextView = (TextView) mView.findViewById(R.id.labelSection);
-//                holder.labelsTextView.setText(label);
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -411,17 +363,81 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
-     * Create a new AsynTask to fetch activity data from Azure
+     *  AsyncTask to submit new label to Azure server
      */
-    class GetActivityAsyncTask extends AsyncTask<Void, Void, String> {
+    private class PostLabelAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            // Display progress bar
+            mReloadingListProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = null;
+            String url = "http://health-companion-uiuc.azurewebsites.net/insertLabel";
+
+            if (!NetworkHelper.checkNetworkAccess(getActivity())) {
+                Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    RequestPackage requestPackage = new RequestPackage();
+                    requestPackage.setEndPoint(url);
+                    requestPackage.setMethod("POST");
+                    requestPackage.setParam("user_id", strings[0]);
+                    requestPackage.setParam("periodStart", strings[1]);
+                    requestPackage.setParam("periodEnd", strings[2]);
+                    requestPackage.setParam("labelName", strings[3]);
+                    requestPackage.setParam("steps", strings[4]);
+                    requestPackage.setParam("cals", strings[5]);
+                    requestPackage.setParam("subjTag", strings[6]);
+
+                    result = HttpHelper.downloadFromFeed(requestPackage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onCancelled() {
+            // Remove progress bar
+            mReloadingListProgressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // Remove progress bar
+            mReloadingListProgressBar.setVisibility(View.GONE);
+
+            // show operation status
+            if ("ok, label saved".equals(result)) {
+                Toast.makeText(getActivity(), "New Label Submitted Successfully", Toast.LENGTH_LONG).show();
+                getLabelData();
+            } else {
+                Toast.makeText(getActivity(), "Failed to Submit New Label", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     *  AsyncTask to fetch activity data from Azure server
+     */
+    private class GetActivityAsyncTask extends AsyncTask<Void, Void, String> {
         private String year;
         private String month;
         private String day;
 
+        /**
+         *  Constructor: reformat date info
+         */
         public GetActivityAsyncTask(int year, int month, int day) {
             this.year = Integer.toString(year);
-            this.month = month < 10? "0" + month : "" + month;
-            this.day = day < 10? "0" + day : "" + day;
+            this.month = fillZero(month);
+            this.day = fillZero(day);
         }
 
         @Override
@@ -460,20 +476,23 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             // Remove progress bar
             mReloadingListProgressBar.setVisibility(View.GONE);
 
+            // If no result, stop immediately
             if (result == null) {
                 return;
             }
 
+            // Show activity header
             StatsFragment.LabelEntryViewHolder holder;
             holder = new StatsFragment.LabelEntryViewHolder();
             holder.labelsTextView = (TextView) mView.findViewById(R.id.activity_header);
             holder.labelsTextView.setText("Intraday Activities for " + month + "/" + day + "/" + year);
 
-            // Generate data for previewed chart and copy of that data for preview chart.
+            // Generate data for previewed chart and copy of that data for preview chart
             ColumnChartData[] results = generateChartData(result, year, month, day);
             ColumnChartData data = results[0];
             ColumnChartData previewData = results[1];
 
+            // Configure charts
             chart.setColumnChartData(data);
             chart.setZoomEnabled(false);
             chart.setScrollEnabled(false);
@@ -481,9 +500,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             previewChart.setColumnChartData(previewData);
             previewChart.setViewportChangeListener(new StatsFragment.ViewportListener());
 
+            // Show charts
             previewX(true);
 
-            // label creation
+            // Show label creation section
             mView.findViewById(R.id.label_creation_header).setVisibility(View.VISIBLE);
             mView.findViewById(R.id.activity_name).setVisibility(View.VISIBLE);
             mView.findViewById(R.id.activity_feeling).setVisibility(View.VISIBLE);
@@ -491,41 +511,16 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     /**
-     * Viewport listener for preview chart(lower one). in {@link #onViewportChanged(Viewport)} method change
-     * viewport of upper chart.
+     *  Charts-related methods
+     *  Ref: https://github.com/lecho/hellocharts-android
      */
-    private class ViewportListener implements ViewportChangeListener {
 
-        @Override
-        public void onViewportChanged(Viewport newViewport) {
-            // don't use animation, it is unnecessary when using preview chart because usually viewport changes
-            // happens to often.
-            chart.setCurrentViewport(newViewport);
-            viewportLeft = (int) Math.round(newViewport.left + 0.5);
-            viewportRight = (int) Math.round(newViewport.right + 0.5);
-
-            updateRangeData();
-        }
-
-    }
-
-    private void updateRangeData() {
-        totalCal = 0;
-        totalSteps = 0;
-        for (int i = viewportLeft; i < viewportRight; i++) {
-            totalCal += caloriesArray[i];
-            totalSteps += stepsArray[i];
-        }
-
-        StatsFragment.LabelEntryViewHolder holder = new StatsFragment.LabelEntryViewHolder();
-        holder.labelsTextView = (TextView) mView.findViewById(R.id.label_creation_description);
-//        String time = "Start time: " + getTimeFormat(viewportLeft / 60, viewportLeft % 60)
-//                + "      End time: " + getTimeFormat(viewportRight / 60, viewportRight % 60) + "\n";
-        String rangeData = "Calories: " + new DecimalFormat("#.###").format(totalCal) + "        Steps: " + totalSteps;
-        holder.labelsTextView.setText(rangeData);
-    }
-
+    /**
+     *  Show the preview charts
+     *  @param animate whether to use animation
+     */
     private void previewX(boolean animate) {
         Viewport tempViewport = new Viewport(chart.getMaximumViewport());
         float dx = tempViewport.width() * 23 / 48;
@@ -538,9 +533,18 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 
+    /**
+     *  Extract data from the result String and transform them into chart data
+     *  @param result result String fetched from the server
+     *  @param year existing year info
+     *  @param month existing month info
+     *  @param day existing day info
+     */
     private ColumnChartData[] generateChartData(String result, String year, String month, String day) {
         int numSubcolumns = 1;
         int numColumns = 1440; // number of minutes
+
+        // to filter dates
         String date = year + "-" + month + "-" + day;
 
         // accumulate calories and step data for each minutes from JSON result
@@ -574,7 +578,6 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         // store as chart data
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
-
         for (int i = 0; i < numColumns; i++) {
             values = new ArrayList<SubcolumnValue>();
             for (int j = 0; j < numSubcolumns; j++) {
@@ -582,23 +585,15 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             }
             columns.add(new Column(values));
         }
-
         ColumnChartData data = new ColumnChartData(columns);
         data.setAxisYLeft(new Axis().setHasLines(true));
 
-        // prepare preview data, is better to use separate deep copy for preview chart.
+        // use separate deep copy for preview chart.
         ColumnChartData previewData = new ColumnChartData(data);
-
-//        // set color to grey to make preview area more visible.
-//        for (Column column : previewData.getColumns()) {
-//            for (SubcolumnValue value : column.getValues()) {
-//                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
-//            }
-//        }
-
         data.setAxisXBottom(getAxisXWithLabels(30));
         previewData.setAxisXBottom(getAxisXWithLabels(60));
 
+        // return results
         ColumnChartData[] results = new ColumnChartData[2];
         results[0] = data;
         results[1] = previewData;
@@ -606,6 +601,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    /**
+     *  Get axis X for chart
+     *  @param step the step we want for axis X
+     */
     private Axis getAxisXWithLabels(int step) {
         List<AxisValue> values = new ArrayList<AxisValue>();
 
@@ -620,6 +619,11 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         return new Axis(values);
     }
 
+    /**
+     *  Transform hour and minutes data into standard time format
+     *  @param hour hour data
+     *  @param minutes minutes data
+     */
     private String getTimeFormat(int hour, int minutes) {
         StringBuilder sb = new StringBuilder();
         if (hour == 0 || hour == 24) {
@@ -643,13 +647,59 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         return sb.toString();
     }
 
+    /**
+     *  Append proper minutes info
+     *  @param minutes minutes data
+     *  @param sb temp result container
+     */
     private void appendMinute(int minutes, StringBuilder sb) {
         if (minutes != 0) {
-            if (minutes < 10) {
-                sb.append(":0" + minutes);
-            } else {
-                sb.append(":" + minutes);
-            }
+            sb.append(":" + fillZero(minutes));
         }
+    }
+
+    /**
+     *  Append a zero for single digit number
+     *  @param num the number to check
+     */
+    private String fillZero(int num) {
+        return (num < 10)? "0" + num : "" + num;
+    }
+
+
+    /**
+     * Viewport listener for preview chart(lower one).
+     * in {@link #onViewportChanged(Viewport)} method change viewport of upper chart.
+     */
+    private class ViewportListener implements ViewportChangeListener {
+
+        @Override
+        public void onViewportChanged(Viewport newViewport) {
+            chart.setCurrentViewport(newViewport);
+
+            // record the boundary value for the current viewport
+            viewportLeft = (int) Math.round(newViewport.left + 0.5);
+            viewportRight = (int) Math.round(newViewport.right + 0.5);
+
+            updateRangeData();
+        }
+    }
+
+    /**
+     * Update the total calories and steps data using the current boundary value
+     */
+    private void updateRangeData() {
+        totalCal = 0;
+        totalSteps = 0;
+        for (int i = viewportLeft; i < viewportRight; i++) {
+            totalCal += caloriesArray[i];
+            totalSteps += stepsArray[i];
+        }
+
+        // Present the latest range data on the page
+        StatsFragment.LabelEntryViewHolder holder = new StatsFragment.LabelEntryViewHolder();
+        holder.labelsTextView = (TextView) mView.findViewById(R.id.label_creation_description);
+        String rangeData = "Calories: " + new DecimalFormat("#.###").format(totalCal) + "        Steps: " + totalSteps;
+        holder.labelsTextView.setText(rangeData);
     }
 }

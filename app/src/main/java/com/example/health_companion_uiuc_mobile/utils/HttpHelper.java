@@ -1,8 +1,9 @@
-package com.example.health_companion_uiuc_mobile.utils;
-
 /**
+ * Source: David Gassner, Android App Development: RESTful Web Services
  * https://gist.github.com/davidgassner/71734d7ab5703cbd34c094de5add7819
  */
+
+package com.example.health_companion_uiuc_mobile.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,8 +13,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * helper class handling content downloading
+ */
 public class HttpHelper {
 
+    /**
+     * send request to download content from the given url
+     * @param url the url address to download content from;
+     */
     public static String downloadUrl(String url)
             throws IOException {
         RequestPackage requestPackage = new RequestPackage();
@@ -21,6 +29,10 @@ public class HttpHelper {
         return downloadFromFeed(requestPackage);
     }
 
+    /**
+     * send request to download content using the request package
+     * @param requestPackage the request package containing all information for the http request
+     */
     public static String downloadFromFeed(RequestPackage requestPackage)
             throws IOException {
 
@@ -68,6 +80,10 @@ public class HttpHelper {
         return null;
     }
 
+    /**
+     * transform InputStream into String
+     * @param stream the inputStream that needs to be transformed into String
+     */
     private static String readStream(InputStream stream) throws IOException {
 
         byte[] buffer = new byte[1024];

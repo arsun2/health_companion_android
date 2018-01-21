@@ -16,10 +16,6 @@
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_menu_about"
             android:title="@string/about" />
-        <!--<item-->
-            <!--android:id="@+id/nav_manage"-->
-            <!--android:icon="@drawable/ic_menu_manage"-->
-            <!--android:title="Tools" />-->
     </group>
 
     <item android:title="Account">

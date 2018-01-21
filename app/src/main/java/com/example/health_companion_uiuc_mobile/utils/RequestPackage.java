@@ -1,8 +1,9 @@
-package com.example.health_companion_uiuc_mobile.utils;
-
 /**
+ * Source: David Gassner, Android App Development: RESTful Web Services
  * https://gist.github.com/davidgassner/1bc5ed77d08c80d75117b62e987887bb
  */
+
+package com.example.health_companion_uiuc_mobile.utils;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,6 +13,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * the parcelable class for request package
+ */
 public class RequestPackage implements Parcelable {
 
     private String endPoint;
