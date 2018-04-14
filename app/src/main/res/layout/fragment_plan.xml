@@ -104,10 +104,24 @@ android:scrollbars="none">
         android:layout_weight="1"
         android:paddingTop="15dp" />
 
+    <EditText
+        android:id="@+id/nameEvent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name of Event" />
 
+    <DatePicker
+        android:id="@+id/datePicker2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-
-
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Event" />
 
 
     <!--<TextView-->
@@ -135,7 +149,10 @@ android:scrollbars="none">
         <!--android:scrollbars="vertical" />-->
 
 
+
 </LinearLayout>
+
+
 
 
 </android.support.v4.widget.NestedScrollView>

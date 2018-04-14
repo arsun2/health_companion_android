@@ -14,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import lecho.lib.hellocharts.view.ColumnChartView;
 
@@ -34,7 +36,6 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
     private View mInfoUnavailableView;
 
     private ProgressBar mReloadingListProgressBar;
-
     private ColumnChartView chart;
 
     private int year = 2017;
@@ -99,6 +100,13 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
         Button b = (Button) mView.findViewById(R.id.select_date);
         b.setOnClickListener(this);
 
+        Button createButton = (Button) mView.findViewById(R.id.createButton);
+        createButton.setOnClickListener(this);
+        EditText nameEvent = (EditText) mView.findViewById(R.id.nameEvent);
+
+
+
+
         // present page
         refresh();
     }
@@ -131,6 +139,16 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
             case R.id.select_date:
                 DialogFragment newFragment = new DatePickerFragment(1);
                 newFragment.show(getFragmentManager(),"Date Picker");
+                break;
+            case R.id.createButton:
+                /*
+                DialogFragment createFrag = new DatePickerFragment(1);
+                createFrag.show(getFragmentManager(),"Date Picker");
+                */
+                EditText eventName = (EditText) mView.findViewById(R.id.nameEvent);
+                String nameOfEvent = eventName.getText().toString();
+                Toast.makeText(getActivity(), nameOfEvent + " has been successfully added to your calendar.",
+                        Toast.LENGTH_LONG).show();
                 break;
         }
     }
