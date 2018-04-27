@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.*;
 
 import com.example.health_companion_uiuc_mobile.utils.HttpHelper;
 import com.example.health_companion_uiuc_mobile.utils.NetworkHelper;
@@ -351,6 +352,7 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                     String activity = new JSONArray(labelStreamer.getString(2)).getString(0);
                     String feeling = new JSONArray(labelStreamer.getString(5)).getString(0);
                     String calories = new DecimalFormat("#.###").format(labelStreamer.getDouble(4));
+                    String lowerActivity = activity.toLowerCase();
 
                     label = activity + ", consuming around " + calories + " calorie, feeling " + feeling;
 

@@ -202,6 +202,29 @@
             android:text="Labels for Your Daily Life"
             android:textStyle="bold" />
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <Button
+            android:id="@+id/walkingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="0.5"
+            android:text="Walking" />
+
+        <Button
+            android:id="@+id/runningButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_toRightOf="@+id/runningButton"
+            android:layout_weight="0.5"
+            android:text="Running" />
+        </LinearLayout>
+
         <ListView
             android:id="@+id/label_list"
             android:layout_width="match_parent"
