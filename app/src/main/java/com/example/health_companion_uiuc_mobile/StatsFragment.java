@@ -1,6 +1,8 @@
 package com.example.health_companion_uiuc_mobile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -72,8 +74,13 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
     private EditText mActivityNameEditText;
     private EditText mActivityFeelingEditText;
 
+    private Button walkingButton;
+    private Button runningButton;
+
     private int viewportLeft;
     private int viewportRight;
+    private boolean walkingTrue = false;
+    private boolean runningTrue = false;
 
     private float[] caloriesArray;
     private int[] stepsArray;
@@ -219,6 +226,16 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 mActivityFeelingEditText.getText().clear();
                 previewX(true);
                 break;
+            case R.id.walkingButton:
+                walkingTrue = true;
+                getActivity().finish();
+                startActivity(getActivity().getIntent());
+                Toast.makeText(getActivity(), "This is my Toast message!",
+                        Toast.LENGTH_LONG).show();
+                break;
+            case R.id.runningButton:
+                runningTrue = true;
+                break;
         }
     }
 
@@ -355,8 +372,20 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                     String lowerActivity = activity.toLowerCase();
 
                     label = activity + ", consuming around " + calories + " calorie, feeling " + feeling;
+                    if(!walkingTrue && !runningTrue) {
+                        labelsListAdapter.addLabel(label);
+                    }
+                    else if(walkingTrue){
+                        if(activity.toLowerCase().contains("walking")){
+                            labelsListAdapter.addLabel(label);
+                        }
+                    }
+                    else{
+                        if(activity.toLowerCase().contains("running")){
+                            labelsListAdapter.addLabel(label);
+                        }
+                    }
 
-                    labelsListAdapter.addLabel(label);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
