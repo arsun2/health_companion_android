@@ -156,6 +156,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         b = (Button) mView.findViewById(R.id.reset_selection);
         b.setOnClickListener(this);
 
+        b = (Button) mView.findViewById(R.id.walkingButton);
+        b.setOnClickListener(this);
+
+        b = (Button) mView.findViewById(R.id.runningButton);
+        b.setOnClickListener(this);
+
         // edit texts
         mActivityNameEditText = (EditText) mView.findViewById(R.id.activity_name);
         mActivityFeelingEditText = (EditText) mView.findViewById(R.id.activity_feeling);
@@ -201,7 +207,13 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         switch (viewId) {
             case R.id.select_date:
                 DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(getFragmentManager(),"Date Picker");
+                newFragment.show(getFragmentManager(), "Date Picker");
+                break;
+            case R.id.runningButton:
+                InfoStore.runningTrue = true;
+                InfoStore.walkingTrue = false;
+                getActivity().finish();
+                startActivity(getActivity().getIntent());
                 break;
             case R.id.submit_label:
                 String name = mActivityNameEditText.getText().toString();
@@ -227,15 +239,12 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 previewX(true);
                 break;
             case R.id.walkingButton:
-                walkingTrue = true;
+                InfoStore.walkingTrue = true;
+                InfoStore.runningTrue = false;
                 getActivity().finish();
                 startActivity(getActivity().getIntent());
-                Toast.makeText(getActivity(), "This is my Toast message!",
-                        Toast.LENGTH_LONG).show();
                 break;
-            case R.id.runningButton:
-                runningTrue = true;
-                break;
+
         }
     }
 
@@ -326,13 +335,14 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         protected String doInBackground(Void... voids) {
             String result = null;
             String url = "http://health-companion-uiuc.azurewebsites.net/getLabel?user_id=" + userID;
-            System.out.println(url);
+            //System.out.println(url);
 
             if (!NetworkHelper.checkNetworkAccess(getActivity())) {
                 Toast.makeText(getActivity(), "Please check your network", Toast.LENGTH_SHORT).show();
             } else {
                 try {
                     result = HttpHelper.downloadUrl(url);
+                    System.out.println(result);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -347,6 +357,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             mReloadingListProgressBar.setVisibility(View.GONE);
         }
 
+        protected void updateWalking() {
+
+        }
+
         @Override
         protected void onPostExecute(String result) {
             // Remove progress bar
@@ -354,14 +368,16 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
             if (result == null) {
                 return;
             }
-
+            String res = "[[\"Sun Oct 01 2017 11:00:00 GMT-0500 (CDT)\",\"Sun Oct 01 2017 13:00:00 GMT-0500 (CDT)\",\"[\\\"Walking to Siebel\\\"]\",\"5267\",\"613.5312795639038\",\"[\\\"refreshing\\\"]\"],[\"Sun Oct 01 2017 19:00:00 GMT-0500 (CDT)\",\"Sun Oct 01 2017 20:00:00 GMT-0500 (CDT)\",\"[\\\"Working out at CRCE\\\"]\",\"8242\",\"765.5814476013184\",\"[\\\"exhausted\\\"]\"],[\"Sun Oct 01 2017 00:00:00 GMT-0500 (CDT)\",\"Sun Oct 01 2017 01:00:00 GMT-0500 (CDT)\",\"[\\\"Walking back home\\\"]\",\"2871\",\"342.68400382995605\",\"[\\\"tired\\\"]\"],[\"Sun Oct 01 2017 00:00:00 GMT-0500 (CDT)\",\"Sun Oct 01 2017 23:00:00 GMT-0500 (CDT)\",\"[\\\"Walking with friends\\\"]\",\"26612\",\"3089.7404947280884\",\"[\\\"relaxed\\\"]\"],[\"Thu Sep 28 2017 19:00:00 GMT-0500 (CDT)\",\"Thu Sep 28 2017 19:00:00 GMT-0500 (CDT)\",\"[\\\"Swimming\\\"]\",\"2013\",\"165.24984216690063\",\"[\\\"awesome\\\"]\"],[\"Sun Oct 01 2017 08:16:00 GMT-0500 (CDT)\",\"Sun Oct 01 2017 08:35:00 GMT-0500 (CDT)\",\"[\\\"groceries\\\"]\",\"97.98224020004272\",\"97.98224020004272\",\"[\\\"beautiful gifts at CM\\\"]\"],[\"2018-04-12T11:30:00-05:00\",\"2018-04-12T12:42:00-05:00\",\"[\\\"Running\\\\n\\\"]\",\"0\",\"0.0\",\"[\\\"fulfilled\\\"]\"],[\"2017-10-02T14:26:00-05:00\",\"2017-10-02T15:38:00-05:00\",\"[\\\"Biking to market\\\"]\",\"523\",\"61.93696\",\"[\\\"free\\\"]\"],[\"2017-10-02T11:30:00-05:00\"," +
+                    "\"2017-10-02T12:42:00-05:00\",\"[\\\"running\\\"]\",\"697\",\"87.32096\",\"[\\\"good\\\"]\"]]";
             // Show label header
             mView.findViewById(R.id.label_header).setVisibility(View.VISIBLE);
 
             // extract labels from the result String and put them into adapter
             labelsListAdapter.clearMessages();
             try {
-                JSONArray streamer = new JSONArray(result);
+                System.out.println(result);
+                JSONArray streamer = new JSONArray(res);
                 String label = "";
                 for (int i = streamer.length() - 1; i >= 0; i--) {
                     label = streamer.getString(i);
@@ -369,14 +385,14 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                     String activity = new JSONArray(labelStreamer.getString(2)).getString(0);
                     String feeling = new JSONArray(labelStreamer.getString(5)).getString(0);
                     String calories = new DecimalFormat("#.###").format(labelStreamer.getDouble(4));
-                    String lowerActivity = activity.toLowerCase();
 
                     label = activity + ", consuming around " + calories + " calorie, feeling " + feeling;
-                    if(!walkingTrue && !runningTrue) {
+                    if(!InfoStore.walkingTrue && !InfoStore.runningTrue) {
                         labelsListAdapter.addLabel(label);
                     }
-                    else if(walkingTrue){
-                        if(activity.toLowerCase().contains("walking")){
+                    else if(InfoStore.walkingTrue && !InfoStore.runningTrue){
+                        System.out.println("hey1");
+                        if(label.toLowerCase().contains("walking")){
                             labelsListAdapter.addLabel(label);
                         }
                     }

@@ -209,6 +209,7 @@
             android:orientation="horizontal">
         <Button
             android:id="@+id/walkingButton"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -217,10 +218,11 @@
 
         <Button
             android:id="@+id/runningButton"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_toRightOf="@+id/runningButton"
+            android:layout_toRightOf="@+id/walkingButton"
             android:layout_weight="0.5"
             android:text="Running" />
         </LinearLayout>

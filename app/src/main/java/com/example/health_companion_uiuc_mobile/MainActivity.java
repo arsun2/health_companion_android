@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity
 
     private boolean networkOK;
     private User user;
+    private boolean walkingTrue = false;
+    private boolean runningTrue = false;
+
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
