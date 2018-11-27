@@ -212,6 +212,10 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
                 DialogFragment newFragment = new DatePickerFragment();
                 newFragment.show(getFragmentManager(), "Date Picker");
                 break;
+            case R.id.chatButton:
+                Intent intent = new Intent (getActivity(), ChatActivity.class);
+                startActivity(intent);
+                break;
             case R.id.runningButton:
                 InfoStore.runningTrue = true;
                 InfoStore.walkingTrue = false;
