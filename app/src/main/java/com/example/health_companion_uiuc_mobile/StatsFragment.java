@@ -162,6 +162,9 @@ public class StatsFragment extends Fragment implements View.OnClickListener {
         b = (Button) mView.findViewById(R.id.runningButton);
         b.setOnClickListener(this);
 
+        b = (Button) mView.findViewById(R.id.chatButton);
+        b.setOnClickListener(this);
+
         // edit texts
         mActivityNameEditText = (EditText) mView.findViewById(R.id.activity_name);
         mActivityFeelingEditText = (EditText) mView.findViewById(R.id.activity_feeling);

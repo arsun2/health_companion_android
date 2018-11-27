@@ -148,7 +148,7 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
                 EditText eventName = (EditText) mView.findViewById(R.id.nameEvent);
                 String nameOfEvent = eventName.getText().toString();
                 //Toast.makeText(getActivity(), nameOfEvent + " has been successfully added to your calendar.",
-                        Toast.LENGTH_LONG).show();
+                        //Toast.LENGTH_LONG).show();
                 break;
         }
     }
