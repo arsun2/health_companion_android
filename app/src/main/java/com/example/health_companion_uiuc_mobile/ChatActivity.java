@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class ChatActivity extends AppCompatActivity {
     public TextView titleView;
     public TextView messageView;
     public static Button extraButton;
+    public static Button sendMessage;
+    public static EditText mNewMessage;
     public static RecyclerView mRecyclerView;
     private MessageAdapter messageAdapter;
     private ArrayList<Participant> parList;
@@ -32,12 +35,14 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.chat_room);
 
         extraButton = (Button) findViewById(R.id.editButton);
+        sendMessage = (Button) findViewById(R.id.messageButton);
+        mNewMessage = (EditText) findViewById(R.id.newMessage);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
 
         parList = new ArrayList<>();
-        Participant welcome = new Participant("Healthcare Pal", "Welcome to the application");
+        Participant welcome = new Participant("Health Companion", "Try to walk to the store!");
         parList.add(welcome);
         messageAdapter = new MessageAdapter(parList);
         mRecyclerView.setAdapter(messageAdapter);
@@ -51,5 +56,15 @@ public class ChatActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+       sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = mNewMessage.getText().toString();
+                Participant newPar = new Participant("You", message);
+                parList.add(newPar);
+            }
+        });
+        messageAdapter.notifyDataSetChanged();
     }
 }
