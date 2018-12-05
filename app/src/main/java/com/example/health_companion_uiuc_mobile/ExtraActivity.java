@@ -15,7 +15,7 @@ import android.widget.EditText;
 public class ExtraActivity extends AppCompatActivity {
     private Button mColorButton;
     private Button workButton;
-    private Button mGoogleButton;
+    private Button calendarButton;
     private EditText mGoogleText;
 
     @Override
@@ -24,12 +24,27 @@ public class ExtraActivity extends AppCompatActivity {
         setContentView(R.layout.extra_activity);
 
         workButton = (Button) findViewById(R.id.workButton);
+        calendarButton = (Button) findViewById(R.id.openButton);
         workButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String googleSearch = mGoogleText.getText().toString();
+                //String googleSearch = mGoogleText.getText().toString();
                 //String googleURL = "http://lmgtfy.com/?q=" + googleSearch;
                 String workout = "https://www.bodybuilding.com/content/your-4-week-plan-for-guaranteed-muscle-growth.html";
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse(workout));
+                startActivity(intent);
+            }
+        });
+
+        calendarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //String googleSearch = mGoogleText.getText().toString();
+                //String googleURL = "http://lmgtfy.com/?q=" + googleSearch;
+                String workout = "https://calendar.google.com/calendar/r";
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);

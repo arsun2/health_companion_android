@@ -42,7 +42,7 @@ public class ChatActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false));
 
         parList = new ArrayList<>();
-        Participant welcome = new Participant("Health Companion", "Try to walk to the store!");
+        Participant welcome = new Participant("Health Companion", "Reminder: Get your cardio in at 4!");
         parList.add(welcome);
         messageAdapter = new MessageAdapter(parList);
         mRecyclerView.setAdapter(messageAdapter);
@@ -63,6 +63,8 @@ public class ChatActivity extends AppCompatActivity {
                 String message = mNewMessage.getText().toString();
                 Participant newPar = new Participant("You", message);
                 parList.add(newPar);
+                messageAdapter = new MessageAdapter(parList);
+                mRecyclerView.setAdapter(messageAdapter);
             }
         });
         messageAdapter.notifyDataSetChanged();

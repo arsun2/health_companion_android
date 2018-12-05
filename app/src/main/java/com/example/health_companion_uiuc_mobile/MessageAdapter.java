@@ -44,7 +44,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         String name = participant.getName();
         int cutOff = participant.getName().indexOf(0);
-        holder.titleView.setText(name.substring(0, name.length()-5));
+        holder.titleView.setText(name.substring(0, name.length()));
         holder.messageView.setText(participant.getMessage());
 
     }
