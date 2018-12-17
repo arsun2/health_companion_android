@@ -1,6 +1,7 @@
 package com.example.health_companion_uiuc_mobile;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,8 +43,10 @@ public class ChatActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false));
 
         parList = new ArrayList<>();
-        Participant welcome = new Participant("Health Companion", "Reminder: Get your cardio in at 4!");
+        Participant welcome = new Participant("Health Companion", "Welcome to Health Companion - Send h for help");
+        Participant start = new Participant("Health Companion", "Reminder: Get your cardio in at 4!");
         parList.add(welcome);
+        parList.add(start);
         messageAdapter = new MessageAdapter(parList);
         mRecyclerView.setAdapter(messageAdapter);
 
@@ -63,6 +66,26 @@ public class ChatActivity extends AppCompatActivity {
                 String message = mNewMessage.getText().toString();
                 Participant newPar = new Participant("You", message);
                 parList.add(newPar);
+                if(message.equals("h")){
+                    String helpMessage = "Help - List of commands:\n" +
+                            "Press n to create a calendar event\nPress l to open a list of workout plans" +
+                            "\nPress p to view your progress in the past month\nPress f to open Fitbit app\nPress v to view a map of" +
+                             " exercise activity";
+                    Participant newParHelp = new Participant("Health Companion", helpMessage);
+                    parList.add(newParHelp);
+                }
+                if(message.equals("l")){
+                    String workout = "https://www.bodybuilding.com/content/your-4-week-plan-for-guaranteed-muscle-growth.html";
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                    intent.setData(Uri.parse(workout));
+                    startActivity(intent);
+                }
+                if(message.equals("p")){
+                    Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
                 messageAdapter = new MessageAdapter(parList);
                 mRecyclerView.setAdapter(messageAdapter);
             }
