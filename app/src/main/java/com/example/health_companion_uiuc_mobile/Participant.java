@@ -3,7 +3,8 @@ package com.example.health_companion_uiuc_mobile;
 import java.util.ArrayList;
 
 /**
- * Created by sunaustin8 on 4/16/17.
+ * Created by sunaustin8 on 10/16/18.
+ * Object for each chat message
  */
 
 public class Participant {

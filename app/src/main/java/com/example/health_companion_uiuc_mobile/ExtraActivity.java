@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 /**
  * Created by sunaustin8 on 12/3/18.
+ * Extra activity that is navigated from the Chat Activity
  */
 
 public class ExtraActivity extends AppCompatActivity {

@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by sunaustin8 on 12/5/18.
+ * Used to store potential default messages as needed 
  */
 
 public class MessageList {

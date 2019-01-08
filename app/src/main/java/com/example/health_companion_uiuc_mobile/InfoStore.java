@@ -2,6 +2,7 @@ package com.example.health_companion_uiuc_mobile;
 
 /**
  * Created by sunaustin8 on 5/5/18.
+ * Sets default values of filtering options for labels
  */
 
 public class InfoStore {
@@ -23,9 +24,4 @@ public class InfoStore {
     public boolean isRunningTrue() {
         return runningTrue;
     }
-
-
-
-
-
 }

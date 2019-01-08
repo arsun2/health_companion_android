@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 /**
  * Created by sunaustin8 on 11/27/18.
+ * Chatbot activity
  */
 
 public class ChatActivity extends AppCompatActivity {
@@ -50,8 +51,6 @@ public class ChatActivity extends AppCompatActivity {
         messageAdapter = new MessageAdapter(parList);
         mRecyclerView.setAdapter(messageAdapter);
 
-
-        //opens the edit Detail Activity upon the clicking of this button
         extraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+       //handles population of new messages and prompts appropiate response to user request
        sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

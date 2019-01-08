@@ -9,7 +9,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by sunaustin8 on 5/1/17.
+ * Created by sunaustin8 on 11/1/18.
+ * Adapter to populate chat module
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
@@ -69,4 +70,3 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
 }
-
